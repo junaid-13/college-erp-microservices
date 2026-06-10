@@ -1,3 +1,4 @@
+---
 name: Building-on-commit
 on:
   push:
@@ -17,6 +18,7 @@ jobs:
           show-progress: true  #Show progress of the checkout action. Default true
           token: ${{ secrets.GITHUB_TOKEN }} 
           lfs: false
+
       - name: Install node
         uses: actions/setup-node@v6
         with:
