@@ -2,7 +2,7 @@ name: Building-on-commit
 on:
   push:
     branches: 
-    - feat/*
+    - feat/**
 
 jobs:
   code-checkout:
@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Checkout code
-      - uses: actions/checkout@v6
+        uses: actions/checkout@v6
         with:
           repository: ${{ github.repository }}
           ref: ${{ github.ref }}
@@ -18,7 +18,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }} 
           lfs: false
       - name: Install node
-      - uses: actions/setup-node@v6
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
