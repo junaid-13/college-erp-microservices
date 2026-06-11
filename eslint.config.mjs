@@ -50,7 +50,7 @@ export default defineConfig([
       sonarjs,
       unicorn,
     },
-    extends: ["js/recommended","prettier"], // ESLint's recommended ruleset + Prettier disables conflicts with formatting rules
+    extends: ["js/recommended"], // ESLint's recommended ruleset + Prettier disables conflicts with formatting rules
     settings: {
       // Let eslint-plugin-import resolve Node-style paths for import/order grouping.
       "import/resolver": {
