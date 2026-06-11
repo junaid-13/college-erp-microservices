@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           token: ${{ secrets.MERN_ERP_TOKEN }}
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -49,7 +50,7 @@ jobs:
             exit 0
           fi
 
-          git commit -m "style: apply prettier formatting [skip ci]"
+          git commit -m "style: apply prettier formatting"
 
       - name: Push formatting changes
         if: steps.prettier.outcome == 'failure'
