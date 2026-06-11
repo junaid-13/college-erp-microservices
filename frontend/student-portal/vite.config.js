@@ -2,7 +2,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-var vite_config_default = defineConfig({
+const vite_config_default = defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
