@@ -16,7 +16,8 @@
     "pm2:stop": "pm2 stop infrastructure/pm2/ecosystem.config.js",
     "pm2:logs": "pm2 logs",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "prettier:check": "prettier --check ."
   },
   "engines": {
     "node": ">=18.0.0"
