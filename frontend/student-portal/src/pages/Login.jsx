@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const DASHBOARD_BY_ROLE = {
-  ADMIN: '/admin',
-  HOD: '/hod',
-  FACULTY: '/faculty',
-  STUDENT: '/student',
+  ADMIN: "/admin",
+  HOD: "/hod",
+  FACULTY: "/faculty",
+  STUDENT: "/student",
 };
 
 export default function Login() {
@@ -14,15 +14,15 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
   function validate() {
     const e = {};
-    if (!email.trim()) e.email = 'Email is required';
-    if (!password) e.password = 'Password is required';
+    if (!email.trim()) e.email = "Email is required";
+    if (!password) e.password = "Password is required";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -34,12 +34,11 @@ export default function Login() {
     setErrors({});
     try {
       const user = await login(email, password);
-      const dest =
-        location.state?.from || DASHBOARD_BY_ROLE[user.role] || '/';
+      const dest = location.state?.from || DASHBOARD_BY_ROLE[user.role] || "/";
       navigate(dest, { replace: true });
     } catch (err) {
       const message =
-        err.response?.data?.message || 'Login failed. Please try again.';
+        err.response?.data?.message || "Login failed. Please try again.";
       setErrors({ form: message });
     } finally {
       setSubmitting(false);
@@ -79,7 +78,7 @@ export default function Login() {
         </label>
 
         <button type="submit" disabled={submitting}>
-          {submitting ? 'Signing in…' : 'Login'}
+          {submitting ? "Signing in…" : "Login"}
         </button>
       </form>
     </div>
