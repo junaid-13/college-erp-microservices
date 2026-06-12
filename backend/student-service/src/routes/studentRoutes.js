@@ -12,7 +12,6 @@ const {
   statusSchema,
 } = require("../validators/studentValidator");
 
-
 const router = express.Router();
 
 // All student routes require authentication.

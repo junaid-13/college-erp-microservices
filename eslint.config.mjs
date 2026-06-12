@@ -74,9 +74,9 @@ export default defineConfig([
       "unicorn/no-useless-spread": "warn", // `[...[a, b]]` / spreading into a fresh array needlessly
       "unicorn/prefer-array-some": "warn", // `.find(...) !== undefined` -> `.some(...)`
       "unicorn/throw-new-error": "error", // always `throw new Error()`, never `throw Error()`
-      
+
       //React-hooks rules
-      "reactHooks/rules-of-hooks": "error", 
+      "reactHooks/rules-of-hooks": "error",
       "reactHooks/exhaustive-deps": "error",
       "reactHooks/unsupported-syntax": "error",
 

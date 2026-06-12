@@ -58,9 +58,7 @@ export default function App() {
           />
           <Route
             path="/student/notification-preferences"
-            element={
-              <NotificationPreferences service={notificationService} />
-            }
+            element={<NotificationPreferences service={notificationService} />}
           />
         </Route>
         <Route path="/" element={<Navigate to="/student" replace />} />
