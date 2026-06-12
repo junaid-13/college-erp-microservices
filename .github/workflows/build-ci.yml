@@ -3,7 +3,7 @@ name: Building-on-push
 on:
   push:
     branches:
-      - "feat/**"
+      - "dev/**"
 
 jobs:
   format:
