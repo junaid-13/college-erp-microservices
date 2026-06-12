@@ -3,7 +3,7 @@ name: Building-on-push
 on:
   push:
     branches:
-      - "dev/**"
+      - "feat/**"
 
 jobs:
   format:
@@ -30,10 +30,32 @@ jobs:
         continue-on-error: true
         run: npx prettier --check .
 
-      - name: Asking to fix the prettier issues
+      - name: Fix formatting
         if: steps.prettier.outcome == 'failure'
-        run: echo "Please run 'npx prettier --write .' to fix formatting issues."
+        run: npx prettier --write .
 
+      - name: Commit formatting changes
+        if: steps.prettier.outcome == 'failure'
+        env:
+          GIT_USER: ${{ github.actor }}
+          GIT_EMAIL: ${{ secrets.GIT_MAIL }}
+        run: |
+          git config user.name "$GIT_USER"
+          git config user.email "$GIT_EMAIL"
+
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "style: apply prettier formatting"
+
+      - name: Push formatting changes
+        if: steps.prettier.outcome == 'failure'
+        run: |
+          git push origin HEAD:${{ github.ref_name }}
 
   quality:
     needs: format
