@@ -82,7 +82,26 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
 
       - name: Lint code
+        id: lint
         run: npm run lint
+
+      - name: Commit lint fixes
+        if: steps.lint.outcome == 'failure'
+        env:
+          GIT_USER: ${{ github.actor }}
+          GIT_EMAIL: ${{ secrets.GIT_MAIL }}
+        run: |
+          git config user.name "$GIT_USER"
+          git config user.email "$GIT_EMAIL"
+
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "fix: apply linting fixes"
 
   build:
     needs: quality
