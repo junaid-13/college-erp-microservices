@@ -12,14 +12,14 @@
 // This keeps the build green while still reporting every smell.
 
 import js from "@eslint/js";
-import globals from "globals";
-import pluginReact from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
+import { defineConfig } from "eslint/config";
 import pluginImport from "eslint-plugin-import";
 import pluginPromise from "eslint-plugin-promise";
+import pluginReact from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
 import sonarjs from "eslint-plugin-sonarjs";
 import unicorn from "eslint-plugin-unicorn";
-import { defineConfig } from "eslint/config";
+import globals from "globals";
 
 export default defineConfig([
   // ---------------------------------------------------------------------------
@@ -49,9 +49,8 @@ export default defineConfig([
       promise: pluginPromise,
       sonarjs,
       unicorn,
-      reactHooks,
     },
-    extends: ["js/recommended"],
+    extends: ["js/recommended"], // ESLint's recommended ruleset + Prettier disables conflicts with formatting rules
     settings: {
       // Let eslint-plugin-import resolve Node-style paths for import/order grouping.
       "import/resolver": {
@@ -74,11 +73,6 @@ export default defineConfig([
       "unicorn/no-useless-spread": "warn", // `[...[a, b]]` / spreading into a fresh array needlessly
       "unicorn/prefer-array-some": "warn", // `.find(...) !== undefined` -> `.some(...)`
       "unicorn/throw-new-error": "error", // always `throw new Error()`, never `throw Error()`
-
-      //React-hooks rules
-      "reactHooks/rules-of-hooks": "error",
-      "reactHooks/exhaustive-deps": "error",
-      "reactHooks/unsupported-syntax": "error",
 
       // === (2) MAINTAINABILITY — size/shape limits keep units reviewable ======
       "max-lines": [

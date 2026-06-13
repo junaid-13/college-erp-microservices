@@ -1,5 +1,6 @@
 // vite.config.js
 import react from "@vitejs/plugin-react";
+//Importing configuration of Vite from the original file
 import { defineConfig } from "vite";
 
 const vite_config_default = defineConfig({
