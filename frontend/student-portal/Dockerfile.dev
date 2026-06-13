@@ -1,0 +1,8 @@
+FROM node:20-slim AS base
+
+WORKDIR /student-portal
+
+COPY package.json /student-portal/
+
+RUN npm install -D
+
