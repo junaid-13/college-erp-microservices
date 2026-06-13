@@ -12,11 +12,11 @@ RUN cd frontend/student-portal && npm run build
 
 FROM node:20-slim
 
-WORKDIR /student-portal
+WORKDIR /app
 
-COPY package.json  package-lock.json /student-portal/
+COPY package.json  package-lock.json /app/
 
-COPY --from=base frontend/student-portal/ /student-portal/
+COPY --from=base student-portal/frontend/student-portal/ /app/
 
 RUN npm ci --workspaces=frontend/student-portal --omit=dev
 
