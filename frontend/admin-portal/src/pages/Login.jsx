@@ -60,7 +60,7 @@ export default function Login() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@college.edu"
+            placeholder="you@college.edu"
           />
           {errors.email && <span className="field-error">{errors.email}</span>}
         </label>
@@ -71,7 +71,7 @@ export default function Login() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="•••••••••"
+            placeholder="••••••••"
           />
           {errors.password && (
             <span className="field-error">{errors.password}</span>
