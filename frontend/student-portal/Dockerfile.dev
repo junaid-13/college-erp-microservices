@@ -1,27 +1,25 @@
 FROM node:20-slim AS base
 
-WORKDIR /student-portal
+WORKDIR /student-portal/
 
-COPY package.json  package-lock.json /student-portal/
+COPY package.json package-lock.json /student-portal/
 
-COPY frontend/student-portal/index.html  frontend/student-portal/package.json frontend/student-portal/vite.config.js frontend/student-portal/public/ frontend/student-portal/src/ frontend/student-portal/
+COPY frontend/student-portal/package.json /student-portal/frontend/student-portal/
 
-RUN npm ci --workspaces=frontend/student-portal 
+RUN npm ci --workspace frontend/student-portal
 
-RUN cd frontend/student-portal && npm run build
+COPY frontend/student-portal/ /student-portal/frontend/student-portal/
+
+RUN npm run build --workspace frontend/student-portal
 
 FROM node:20-slim
 
 WORKDIR /app
 
-COPY package.json  package-lock.json /app/
+RUN npm install -g serve
 
-COPY --from=base student-portal/frontend/student-portal/ /app/
-
-RUN npm ci --workspaces=frontend/student-portal --omit=dev
-
-#COPY --from=base student-portal/dist /student-portal/dist
+COPY --from=base /student-portal/frontend/student-portal/dist ./dist
 
 EXPOSE 5173
 
-CMD ["node", "dist/server.js"]
+CMD ["serve", "-s", "dist", "-l", "5173"]
