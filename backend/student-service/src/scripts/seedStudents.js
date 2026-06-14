@@ -60,8 +60,7 @@ async function seedStudent({ dept, year, semester, seq, admissionYear }) {
   const index = seq - 1;
   const first = pick(firstNames, index);
   const last = pick(lastNames, index);
-  const email =
-    `${first}.${last}.${index}@students.college.edu`.toLowerCase();
+  const email = `${first}.${last}.${index}@students.college.edu`.toLowerCase();
 
   if (await Student.findOne({ email })) return false;
 
