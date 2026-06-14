@@ -7,6 +7,53 @@ import { estimateFine } from "../utils/libraryHelpers";
  * Borrowing history (Task 12.29). Shared between student & faculty portals.
  * Current + returned books with dates and fines.
  */
+function BookRow({ item, showReturn }) {
+  return (
+    <tr>
+      <td>{item.book?.title || item.bookId}</td>
+      <td>{item.issueDate?.slice(0, 10)}</td>
+      <td>{item.dueDate?.slice(0, 10)}</td>
+      {showReturn && <td>{item.returnDate?.slice(0, 10) || "—"}</td>}
+      <td>
+        {showReturn
+          ? `₹${item.fineAmount || 0}`
+          : `₹${estimateFine(item.dueDate)} (est.)`}
+      </td>
+    </tr>
+  );
+}
+
+function BooksSection({ title, items, columns, showReturn }) {
+  return (
+    <section className="detail-block">
+      <h3>
+        {title} ({items.length})
+      </h3>
+      <table className="data-table">
+        <thead>
+          <tr>
+            {columns.map((c) => (
+              <th key={c}>{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((i) => (
+            <BookRow key={i._id} item={i} showReturn={showReturn} />
+          ))}
+          {!items.length && (
+            <tr>
+              <td colSpan={columns.length} style={{ textAlign: "center" }}>
+                None
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </section>
+  );
+}
+
 export default function MyBooks() {
   const [data, setData] = useState({ current: [], returned: [] });
   const [fines, setFines] = useState(null);
@@ -28,20 +75,6 @@ export default function MyBooks() {
   if (loading) return <div className="page">Loading…</div>;
   if (error) return <div className="page error-banner">{error}</div>;
 
-  const row = (i, showReturn) => (
-    <tr key={i._id}>
-      <td>{i.book?.title || i.bookId}</td>
-      <td>{i.issueDate?.slice(0, 10)}</td>
-      <td>{i.dueDate?.slice(0, 10)}</td>
-      {showReturn && <td>{i.returnDate?.slice(0, 10) || "—"}</td>}
-      <td>
-        {showReturn
-          ? `₹${i.fineAmount || 0}`
-          : `₹${estimateFine(i.dueDate)} (est.)`}
-      </td>
-    </tr>
-  );
-
   return (
     <div className="page">
       <h2>My Books</h2>
@@ -52,54 +85,19 @@ export default function MyBooks() {
         </p>
       )}
 
-      <section className="detail-block">
-        <h3>Current ({data.current.length})</h3>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Issued</th>
-              <th>Due</th>
-              <th>Fine</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.current.map((i) => row(i, false))}
-            {!data.current.length && (
-              <tr>
-                <td colSpan="4" style={{ textAlign: "center" }}>
-                  None
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </section>
+      <BooksSection
+        title="Current"
+        items={data.current}
+        columns={["Title", "Issued", "Due", "Fine"]}
+        showReturn={false}
+      />
 
-      <section className="detail-block">
-        <h3>Returned ({data.returned.length})</h3>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Issued</th>
-              <th>Due</th>
-              <th>Returned</th>
-              <th>Fine</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.returned.map((i) => row(i, true))}
-            {!data.returned.length && (
-              <tr>
-                <td colSpan="5" style={{ textAlign: "center" }}>
-                  None
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </section>
+      <BooksSection
+        title="Returned"
+        items={data.returned}
+        columns={["Title", "Issued", "Due", "Returned", "Fine"]}
+        showReturn
+      />
     </div>
   );
 }

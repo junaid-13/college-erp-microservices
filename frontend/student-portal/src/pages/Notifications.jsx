@@ -9,6 +9,44 @@
  */
 import { useEffect, useState, useCallback } from "react";
 
+function NotificationTable({ items, onRead }) {
+  return (
+    <table className="data-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Message</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {items.map((n) => (
+          <tr key={n._id} style={{ fontWeight: n.isRead ? "normal" : 600 }}>
+            <td>{n.title}</td>
+            <td>{n.message}</td>
+            <td>{n.isRead ? "Read" : "Unread"}</td>
+            <td>{n.createdAt ? new Date(n.createdAt).toLocaleString() : "—"}</td>
+            <td>
+              {!n.isRead && (
+                <button onClick={() => onRead(n._id)}>Mark read</button>
+              )}
+            </td>
+          </tr>
+        ))}
+        {!items.length && (
+          <tr>
+            <td colSpan="5" style={{ textAlign: "center" }}>
+              No notifications.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  );
+}
+
 export default function Notifications({ service }) {
   const [items, setItems] = useState([]);
   const [pagination, setPagination] = useState({
@@ -61,41 +99,7 @@ export default function Notifications({ service }) {
       {loading ? (
         <p>Loading…</p>
       ) : (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Message</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((n) => (
-              <tr key={n._id} style={{ fontWeight: n.isRead ? "normal" : 600 }}>
-                <td>{n.title}</td>
-                <td>{n.message}</td>
-                <td>{n.isRead ? "Read" : "Unread"}</td>
-                <td>
-                  {n.createdAt ? new Date(n.createdAt).toLocaleString() : "—"}
-                </td>
-                <td>
-                  {!n.isRead && (
-                    <button onClick={() => read(n._id)}>Mark read</button>
-                  )}
-                </td>
-              </tr>
-            ))}
-            {!items.length && (
-              <tr>
-                <td colSpan="5" style={{ textAlign: "center" }}>
-                  No notifications.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <NotificationTable items={items} onRead={read} />
       )}
 
       <div className="pagination">

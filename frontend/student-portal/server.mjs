@@ -3,6 +3,8 @@
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { join, normalize, extname } from "node:path";
+import process from "node:process";
+import console from "node:console";
 
 const ROOT = join(process.cwd(), "dist");
 const PORT = process.env.PORT || 5173;
