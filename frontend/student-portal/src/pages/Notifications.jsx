@@ -27,7 +27,9 @@ function NotificationTable({ items, onRead }) {
             <td>{n.title}</td>
             <td>{n.message}</td>
             <td>{n.isRead ? "Read" : "Unread"}</td>
-            <td>{n.createdAt ? new Date(n.createdAt).toLocaleString() : "—"}</td>
+            <td>
+              {n.createdAt ? new Date(n.createdAt).toLocaleString() : "—"}
+            </td>
             <td>
               {!n.isRead && (
                 <button onClick={() => onRead(n._id)}>Mark read</button>

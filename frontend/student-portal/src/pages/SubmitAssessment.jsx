@@ -32,8 +32,8 @@ function SubmissionDetails({ submission, assessment, status }) {
   return (
     <>
       <p>
-        Status: <span className={`flag flag-${status}`}>{status}</span> · Attempt
-        #{submission.attemptNumber}
+        Status: <span className={`flag flag-${status}`}>{status}</span> ·
+        Attempt #{submission.attemptNumber}
       </p>
       {submission.submissionUrl && (
         <p>
@@ -56,7 +56,13 @@ function SubmissionDetails({ submission, assessment, status }) {
 }
 
 /** Upload form (or a disabled notice when re-submission is blocked). */
-function SubmitForm({ canSubmit, submitting, hasSubmission, onFile, onSubmit }) {
+function SubmitForm({
+  canSubmit,
+  submitting,
+  hasSubmission,
+  onFile,
+  onSubmit,
+}) {
   if (!canSubmit) {
     return (
       <p>
@@ -75,7 +81,11 @@ function SubmitForm({ canSubmit, submitting, hasSubmission, onFile, onSubmit }) 
         accept=".pdf,.doc,.docx,.zip,.png,.jpg,.jpeg"
         onChange={(e) => onFile(e.target.files[0])}
       />
-      <button type="submit" disabled={submitting} style={{ marginLeft: "0.5rem" }}>
+      <button
+        type="submit"
+        disabled={submitting}
+        style={{ marginLeft: "0.5rem" }}
+      >
         {buttonLabel}
       </button>
     </form>
