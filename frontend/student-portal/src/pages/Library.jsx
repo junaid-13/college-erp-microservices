@@ -7,6 +7,54 @@ import { isAvailable } from "../utils/libraryHelpers";
  * Book catalog (Task 12.26). Shared between student & faculty portals.
  * Search + browse books with availability.
  */
+function BookRow({ book }) {
+  return (
+    <tr>
+      <td>{book.title}</td>
+      <td>{book.author}</td>
+      <td>{book.category}</td>
+      <td>{book.rackNumber || "—"}</td>
+      <td>
+        {isAvailable(book) ? (
+          <span className="flag flag-APPROVED">
+            {book.availableCopies} available
+          </span>
+        ) : (
+          <span className="flag flag-REJECTED">Out of stock</span>
+        )}
+      </td>
+    </tr>
+  );
+}
+
+function BookTable({ books }) {
+  return (
+    <table className="data-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Category</th>
+          <th>Rack</th>
+          <th>Availability</th>
+        </tr>
+      </thead>
+      <tbody>
+        {books.map((b) => (
+          <BookRow key={b._id} book={b} />
+        ))}
+        {!books.length && (
+          <tr>
+            <td colSpan="5" style={{ textAlign: "center" }}>
+              No books found.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  );
+}
+
 export default function Library() {
   const [books, setBooks] = useState([]);
   const [pagination, setPagination] = useState({
@@ -60,47 +108,7 @@ export default function Library() {
       </form>
 
       {error && <div className="error-banner">{error}</div>}
-      {loading ? (
-        <p>Loading…</p>
-      ) : (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Author</th>
-              <th>Category</th>
-              <th>Rack</th>
-              <th>Availability</th>
-            </tr>
-          </thead>
-          <tbody>
-            {books.map((b) => (
-              <tr key={b._id}>
-                <td>{b.title}</td>
-                <td>{b.author}</td>
-                <td>{b.category}</td>
-                <td>{b.rackNumber || "—"}</td>
-                <td>
-                  {isAvailable(b) ? (
-                    <span className="flag flag-APPROVED">
-                      {b.availableCopies} available
-                    </span>
-                  ) : (
-                    <span className="flag flag-REJECTED">Out of stock</span>
-                  )}
-                </td>
-              </tr>
-            ))}
-            {!books.length && (
-              <tr>
-                <td colSpan="5" style={{ textAlign: "center" }}>
-                  No books found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      )}
+      {loading ? <p>Loading…</p> : <BookTable books={books} />}
 
       <div className="pagination">
         <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>

@@ -18,25 +18,27 @@ export default function TodaySchedule() {
       .finally(() => setLoading(false));
   }, []);
 
+  function renderBody() {
+    if (loading) return <p>Loading…</p>;
+    if (!slots.length) return <p>No classes scheduled today.</p>;
+    return (
+      <ul className="today-list">
+        {slots.map((s) => (
+          <li key={s._id}>
+            <strong>
+              {s.startTime}-{s.endTime}
+            </strong>{" "}
+            · Room {s.roomNumber || "—"} · {s.slotType}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
   return (
     <div className="detail-block">
       <h3>Today&apos;s Schedule</h3>
-      {loading ? (
-        <p>Loading…</p>
-      ) : slots.length ? (
-        <ul className="today-list">
-          {slots.map((s) => (
-            <li key={s._id}>
-              <strong>
-                {s.startTime}-{s.endTime}
-              </strong>{" "}
-              · Room {s.roomNumber || "—"} · {s.slotType}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No classes scheduled today.</p>
-      )}
+      {renderBody()}
     </div>
   );
 }

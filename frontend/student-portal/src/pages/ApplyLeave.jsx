@@ -5,6 +5,72 @@ import { validateLeave, calculateDays } from "../utils/leaveHelpers";
 
 const LEAVE_TYPES = ["CASUAL", "MEDICAL", "EARNED", "ON_DUTY", "OTHER"];
 
+const FULL_WIDTH = { gridColumn: "1 / -1" };
+
+function FieldError({ message }) {
+  return message ? <span className="field-error">{message}</span> : null;
+}
+
+/** Leave detail inputs, extracted to keep ApplyLeave compact. */
+function LeaveFields({ form, errors, set, setFile, days }) {
+  return (
+    <fieldset>
+      <legend>Leave Details</legend>
+      <label>
+        Leave Type
+        <select
+          value={form.leaveType}
+          onChange={(e) => set("leaveType", e.target.value)}
+        >
+          {LEAVE_TYPES.map((t) => (
+            <option key={t}>{t}</option>
+          ))}
+        </select>
+        <FieldError message={errors.leaveType} />
+      </label>
+      <label>
+        From Date
+        <input
+          type="date"
+          value={form.fromDate}
+          onChange={(e) => set("fromDate", e.target.value)}
+        />
+        <FieldError message={errors.fromDate} />
+      </label>
+      <label>
+        To Date
+        <input
+          type="date"
+          value={form.toDate}
+          onChange={(e) => set("toDate", e.target.value)}
+        />
+        <FieldError message={errors.toDate} />
+      </label>
+      <label>
+        Days
+        <input value={days || ""} readOnly />
+      </label>
+      <label style={FULL_WIDTH}>
+        Reason
+        <textarea
+          rows="2"
+          value={form.reason}
+          onChange={(e) => set("reason", e.target.value)}
+        />
+        <FieldError message={errors.reason} />
+      </label>
+      <label style={FULL_WIDTH}>
+        Attachment (PDF/JPG/PNG)
+        <input
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          onChange={(e) => setFile(e.target.files[0])}
+        />
+      </label>
+    </fieldset>
+  );
+}
+
 /**
  * Apply for leave (Task 10.22). Shared between student & faculty portals.
  */
@@ -64,68 +130,13 @@ export default function ApplyLeave() {
       <form className="student-form" onSubmit={handleSubmit} noValidate>
         {serverError && <div className="error-banner">{serverError}</div>}
         {message && <div className="success-banner">{message}</div>}
-        <fieldset>
-          <legend>Leave Details</legend>
-          <label>
-            Leave Type
-            <select
-              value={form.leaveType}
-              onChange={(e) => set("leaveType", e.target.value)}
-            >
-              {LEAVE_TYPES.map((t) => (
-                <option key={t}>{t}</option>
-              ))}
-            </select>
-            {errors.leaveType && (
-              <span className="field-error">{errors.leaveType}</span>
-            )}
-          </label>
-          <label>
-            From Date
-            <input
-              type="date"
-              value={form.fromDate}
-              onChange={(e) => set("fromDate", e.target.value)}
-            />
-            {errors.fromDate && (
-              <span className="field-error">{errors.fromDate}</span>
-            )}
-          </label>
-          <label>
-            To Date
-            <input
-              type="date"
-              value={form.toDate}
-              onChange={(e) => set("toDate", e.target.value)}
-            />
-            {errors.toDate && (
-              <span className="field-error">{errors.toDate}</span>
-            )}
-          </label>
-          <label>
-            Days
-            <input value={days || ""} readOnly />
-          </label>
-          <label style={{ gridColumn: "1 / -1" }}>
-            Reason
-            <textarea
-              rows="2"
-              value={form.reason}
-              onChange={(e) => set("reason", e.target.value)}
-            />
-            {errors.reason && (
-              <span className="field-error">{errors.reason}</span>
-            )}
-          </label>
-          <label style={{ gridColumn: "1 / -1" }}>
-            Attachment (PDF/JPG/PNG)
-            <input
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              onChange={(e) => setFile(e.target.files[0])}
-            />
-          </label>
-        </fieldset>
+        <LeaveFields
+          form={form}
+          errors={errors}
+          set={set}
+          setFile={setFile}
+          days={days}
+        />
         <button type="submit" disabled={submitting}>
           {submitting ? "Submitting…" : "Submit Leave Request"}
         </button>

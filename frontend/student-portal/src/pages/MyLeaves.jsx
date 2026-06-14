@@ -8,6 +8,73 @@ import { statusClass } from "../utils/leaveHelpers";
  * My leaves history (Task 10.23). Shared between student & faculty portals.
  * Supports cancelling pending requests and viewing the status timeline.
  */
+function LeaveRow({ leave: l, isOpen, timeline, onToggle, onCancel }) {
+  return (
+    <Fragment>
+      <tr>
+        <td>{l.leaveType}</td>
+        <td>{l.fromDate?.slice(0, 10)}</td>
+        <td>{l.toDate?.slice(0, 10)}</td>
+        <td>{l.numberOfDays}</td>
+        <td>
+          <span className={statusClass(l.status)}>{l.status}</span>
+        </td>
+        <td>{l.remarks || "—"}</td>
+        <td className="actions">
+          <button onClick={() => onToggle(l._id)}>History</button>
+          {l.status === "PENDING" && (
+            <button onClick={() => onCancel(l._id)}>Cancel</button>
+          )}
+        </td>
+      </tr>
+      {isOpen && (
+        <tr>
+          <td colSpan="7">
+            <LeaveTimeline timeline={timeline} />
+          </td>
+        </tr>
+      )}
+    </Fragment>
+  );
+}
+
+function LeavesTable({ leaves, openId, timeline, onToggle, onCancel }) {
+  return (
+    <table className="data-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Days</th>
+          <th>Status</th>
+          <th>Remarks</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {leaves.map((l) => (
+          <LeaveRow
+            key={l._id}
+            leave={l}
+            isOpen={openId === l._id}
+            timeline={timeline}
+            onToggle={onToggle}
+            onCancel={onCancel}
+          />
+        ))}
+        {!leaves.length && (
+          <tr>
+            <td colSpan="7" style={{ textAlign: "center" }}>
+              No leave requests yet.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  );
+}
+
 export default function MyLeaves() {
   const [leaves, setLeaves] = useState([]);
   const [error, setError] = useState("");
@@ -59,57 +126,13 @@ export default function MyLeaves() {
       {loading ? (
         <p>Loading…</p>
       ) : (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>From</th>
-              <th>To</th>
-              <th>Days</th>
-              <th>Status</th>
-              <th>Remarks</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {leaves.map((l) => (
-              <Fragment key={l._id}>
-                <tr>
-                  <td>{l.leaveType}</td>
-                  <td>{l.fromDate?.slice(0, 10)}</td>
-                  <td>{l.toDate?.slice(0, 10)}</td>
-                  <td>{l.numberOfDays}</td>
-                  <td>
-                    <span className={statusClass(l.status)}>{l.status}</span>
-                  </td>
-                  <td>{l.remarks || "—"}</td>
-                  <td className="actions">
-                    <button onClick={() => toggleTimeline(l._id)}>
-                      History
-                    </button>
-                    {l.status === "PENDING" && (
-                      <button onClick={() => cancel(l._id)}>Cancel</button>
-                    )}
-                  </td>
-                </tr>
-                {openId === l._id && (
-                  <tr>
-                    <td colSpan="7">
-                      <LeaveTimeline timeline={timeline} />
-                    </td>
-                  </tr>
-                )}
-              </Fragment>
-            ))}
-            {!leaves.length && (
-              <tr>
-                <td colSpan="7" style={{ textAlign: "center" }}>
-                  No leave requests yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <LeavesTable
+          leaves={leaves}
+          openId={openId}
+          timeline={timeline}
+          onToggle={toggleTimeline}
+          onCancel={cancel}
+        />
       )}
     </div>
   );

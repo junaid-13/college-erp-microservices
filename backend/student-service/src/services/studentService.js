@@ -11,6 +11,31 @@ function httpError(status, message) {
 }
 
 const MAX_CODE_RETRIES = 5;
+const EMAIL_TAKEN = "A student with this email already exists";
+const STUDENT_NOT_FOUND = "Student not found";
+
+function isDuplicateKey(err, field) {
+  return err.code === 11000 && err.keyPattern && err.keyPattern[field];
+}
+
+// Generate code with a small retry loop to survive races on the unique index.
+async function createWithUniqueCode(data, prefix, year) {
+  let lastErr;
+  for (let i = 0; i < MAX_CODE_RETRIES; i += 1) {
+    const studentCode = await generateStudentCode({ prefix, year });
+    try {
+      return await Student.create({ ...data, studentCode });
+    } catch (err) {
+      if (isDuplicateKey(err, "studentCode")) {
+        lastErr = err; // collision — retry with the next sequence number
+        continue;
+      }
+      if (isDuplicateKey(err, "email")) throw httpError(409, EMAIL_TAKEN);
+      throw err;
+    }
+  }
+  throw lastErr || httpError(500, "Failed to generate a unique student code");
+}
 
 /**
  * Create a student (Task 4.9). Generates a unique registration number,
@@ -25,35 +50,14 @@ async function createStudent(payload) {
 
   // Reject duplicate email early for a clean message.
   const existing = await Student.findOne({ email: data.email.toLowerCase() });
-  if (existing)
-    throw httpError(409, "A student with this email already exists");
+  if (existing) throw httpError(409, EMAIL_TAKEN);
 
   const admissionYear = data.admissionDate
     ? new Date(data.admissionDate).getFullYear()
     : new Date().getFullYear();
 
-  // Generate code with a small retry loop to survive races on the unique index.
-  let lastErr;
-  for (let i = 0; i < MAX_CODE_RETRIES; i += 1) {
-    const studentCode = await generateStudentCode({
-      prefix: departmentPrefix || program || "GEN",
-      year: admissionYear,
-    });
-    try {
-      const student = await Student.create({ ...data, studentCode });
-      return student;
-    } catch (err) {
-      if (err.code === 11000 && err.keyPattern && err.keyPattern.studentCode) {
-        lastErr = err;
-        continue; // collision — retry with the next sequence number
-      }
-      if (err.code === 11000 && err.keyPattern && err.keyPattern.email) {
-        throw httpError(409, "A student with this email already exists");
-      }
-      throw err;
-    }
-  }
-  throw lastErr || httpError(500, "Failed to generate a unique student code");
+  const prefix = departmentPrefix || program || "GEN";
+  return createWithUniqueCode(data, prefix, admissionYear);
 }
 
 /**
@@ -114,7 +118,7 @@ async function getStudents(query = {}) {
 async function getStudent(id) {
   const student = await Student.findById(id);
   if (!student || student.status === "DELETED") {
-    throw httpError(404, "Student not found");
+    throw httpError(404, STUDENT_NOT_FOUND);
   }
   return student;
 }
@@ -125,7 +129,7 @@ async function getStudent(id) {
 async function updateStudent(id, payload) {
   const student = await Student.findById(id);
   if (!student || student.status === "DELETED") {
-    throw httpError(404, "Student not found");
+    throw httpError(404, STUDENT_NOT_FOUND);
   }
 
   const { program, ...data } = payload;
@@ -141,7 +145,7 @@ async function updateStudent(id, payload) {
   // Guard email uniqueness on change.
   if (data.email && data.email.toLowerCase() !== student.email) {
     const dup = await Student.findOne({ email: data.email.toLowerCase() });
-    if (dup) throw httpError(409, "A student with this email already exists");
+    if (dup) throw httpError(409, EMAIL_TAKEN);
   }
 
   Object.assign(student, data);
@@ -155,7 +159,7 @@ async function updateStudent(id, payload) {
 async function deleteStudent(id) {
   const student = await Student.findById(id);
   if (!student || student.status === "DELETED") {
-    throw httpError(404, "Student not found");
+    throw httpError(404, STUDENT_NOT_FOUND);
   }
   student.status = "DELETED";
   await student.save();
@@ -167,7 +171,7 @@ async function deleteStudent(id) {
  */
 async function changeStatus(id, status) {
   const student = await Student.findById(id);
-  if (!student) throw httpError(404, "Student not found");
+  if (!student) throw httpError(404, STUDENT_NOT_FOUND);
   student.status = status;
   await student.save();
   return student;
