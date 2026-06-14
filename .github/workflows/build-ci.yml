@@ -25,6 +25,23 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Ensure required tools are installed
+        id: check-tools
+        continue-on-error: false
+        run: |
+          if npx --no-install prettier --version &> /dev/null; then
+            echo "Prettier is already installed."
+          else
+            echo "Prettier is not installed. Installing..."
+            npm install --no-save prettier
+          fi
+
+          if npx --no-install eslint --version &> /dev/null; then
+            echo "ESLint is already installed."
+          else
+            echo "ESLint is not installed. Installing..."
+            npm install --no-save eslint
+          fi
       - name: Check formatting
         id: prettier
         continue-on-error: true
@@ -50,7 +67,7 @@ jobs:
             exit 0
           fi
 
-          git commit -m "style: apply prettier formatting"
+          git commit -m "style: apply prettier formatting {{ github.sha}}"
 
       - name: Push formatting changes
         if: steps.prettier.outcome == 'failure'
