@@ -23,7 +23,8 @@ export default function Login() {
   function validate() {
     const e = {};
     const emailRegex = /^[A-Za-z]+(?:[._-][A-Za-z]+)*@[A-Za-z-]+\.edu$/;
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[._@-])[A-Za-z\d][A-Za-z\d._@-]{6,}[A-Za-z\d]$/;
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[._@-])[A-Za-z\d][A-Za-z\d._@-]{6,}[A-Za-z\d]$/;
 
     if (!email.trim()) {
       e.email = "Email is required";
@@ -34,9 +35,10 @@ export default function Login() {
     if (!password) {
       e.password = "Password is required";
     } else if (!passwordRegex.test(password)) {
-      e.password = "Password must be atleast 8 characters, contain an uppercase letter, a lowercase letter, a number, and one of (. - _ @). It cannot start or end with a special character.";
+      e.password =
+        "Password must be atleast 8 characters, contain an uppercase letter, a lowercase letter, a number, and one of (. - _ @). It cannot start or end with a special character.";
     }
-    
+
     setErrors(e);
     return Object.keys(e).length === 0;
   }
