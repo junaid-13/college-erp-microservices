@@ -37,10 +37,6 @@ async function createWithUniqueCode(data, prefix, year) {
   throw lastErr || httpError(500, "Failed to generate a unique student code");
 }
 
-/**
- * Create a student (Task 4.9). Generates a unique registration number,
- * validates academic year/semester, and enforces unique email.
- */
 async function createStudent(payload) {
   const { program, departmentPrefix, ...data } = payload;
 
@@ -60,9 +56,6 @@ async function createStudent(payload) {
   return createWithUniqueCode(data, prefix, admissionYear);
 }
 
-/**
- * List students with pagination, search and filters (Tasks 4.10–4.12).
- */
 async function getStudents(query = {}) {
   const page = Math.max(parseInt(query.page, 10) || 1, 1);
   const limit = Math.min(Math.max(parseInt(query.limit, 10) || 20, 1), 100);
@@ -70,22 +63,17 @@ async function getStudents(query = {}) {
 
   const filter = {};
 
-  // By default hide soft-deleted students unless explicitly requested.
-  // Coerce to String so a crafted query (e.g. ?status[$ne]=DELETED) cannot
-  // inject Mongo operators via Express's qs parser (NoSQL operator injection).
   if (query.status) {
     filter.status = String(query.status);
   } else {
     filter.status = { $ne: "DELETED" };
   }
 
-  // Academic filters (Task 4.12).
   if (query.departmentId) filter.departmentId = String(query.departmentId);
   if (query.year) filter.year = Number(query.year);
   if (query.semester) filter.semester = Number(query.semester);
   if (query.section) filter.section = String(query.section).toUpperCase();
 
-  // Search across name / email / registration number (Task 4.11).
   if (query.search) {
     const rx = new RegExp(escapeRegExp(query.search), "i");
     filter.$or = [
@@ -112,9 +100,6 @@ async function getStudents(query = {}) {
   };
 }
 
-/**
- * Get one student by id (Task 4.13).
- */
 async function getStudent(id) {
   const student = await Student.findById(id);
   if (!student || student.status === "DELETED") {
@@ -123,9 +108,6 @@ async function getStudent(id) {
   return student;
 }
 
-/**
- * Update a student (Task 4.14).
- */
 async function updateStudent(id, payload) {
   const student = await Student.findById(id);
   if (!student || student.status === "DELETED") {
@@ -134,7 +116,6 @@ async function updateStudent(id, payload) {
 
   const { program, ...data } = payload;
 
-  // Re-validate academic rules if year/semester changes.
   const year = data.year ?? student.year;
   const semester = data.semester ?? student.semester;
   if (data.year !== undefined || data.semester !== undefined) {
@@ -142,7 +123,6 @@ async function updateStudent(id, payload) {
     if (!check.valid) throw httpError(400, check.message);
   }
 
-  // Guard email uniqueness on change.
   if (data.email && data.email.toLowerCase() !== student.email) {
     const dup = await Student.findOne({ email: data.email.toLowerCase() });
     if (dup) throw httpError(409, EMAIL_TAKEN);
@@ -153,9 +133,6 @@ async function updateStudent(id, payload) {
   return student;
 }
 
-/**
- * Soft-delete a student (Task 4.15). No physical deletion.
- */
 async function deleteStudent(id) {
   const student = await Student.findById(id);
   if (!student || student.status === "DELETED") {
@@ -166,9 +143,6 @@ async function deleteStudent(id) {
   return { status: "DELETED" };
 }
 
-/**
- * Change student lifecycle status (Task 4.16).
- */
 async function changeStatus(id, status) {
   const student = await Student.findById(id);
   if (!student) throw httpError(404, STUDENT_NOT_FOUND);

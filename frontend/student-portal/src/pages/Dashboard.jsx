@@ -2,17 +2,13 @@ import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 
-/**
- * Generic role dashboard. The same component renders for each role,
- * parameterized by title — guarded by RoleGuard at the route level.
- */
 export default function Dashboard({ title }) {
   const { user } = useAuth();
   return (
     <div className="page">
       <h2>{title}</h2>
       <p>
-        Welcome, <strong>{user?.email}</strong>.
+        Welcome, <strong>{user?.name}</strong>
       </p>
       <p>
         Your role is <code>{user?.role}</code>. This area is restricted to your

@@ -22,8 +22,23 @@ export default function Login() {
 
   function validate() {
     const e = {};
-    if (!email.trim()) e.email = "Email is required";
-    if (!password) e.password = "Password is required";
+    const emailRegex = /^[A-Za-z]+(?:[._-][A-Za-z]+)*@[A-Za-z-]+\.edu$/;
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[._@-])[A-Za-z\d][A-Za-z\d._@-]{6,}[A-Za-z\d]$/;
+
+    if (!email.trim()) {
+      e.email = "Email is required";
+    } else if (!emailRegex.test(email)) {
+      e.email = "Enter a valid college email";
+    }
+
+    if (!password) {
+      e.password = "Password is required";
+    } else if (!passwordRegex.test(password)) {
+      e.password =
+        "Password must be atleast 8 characters, contain an uppercase letter, a lowercase letter, a number, and one of (. - _ @). It cannot start or end with a special character.";
+    }
+
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -60,7 +75,7 @@ export default function Login() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@college.edu"
+            placeholder="student@college.edu"
           />
           {errors.email && <span className="field-error">{errors.email}</span>}
         </label>
