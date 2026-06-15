@@ -15,11 +15,11 @@ function resolveAccessSecret() {
   if (secret) return secret;
   if (process.env.NODE_ENV === "production") {
     throw new Error(
-      "JWT_ACCESS_SECRET is not set. Refusing to start with an insecure default secret."
+      "JWT_ACCESS_SECRET is not set. Refusing to start with an insecure default secret.",
     );
   }
   console.warn(
-    "[auth] JWT_ACCESS_SECRET not set — using an insecure DEV-ONLY secret. Do not use in production."
+    "[auth] JWT_ACCESS_SECRET not set — using an insecure DEV-ONLY secret. Do not use in production.",
   );
   return "dev_access_secret_change_me";
 }
