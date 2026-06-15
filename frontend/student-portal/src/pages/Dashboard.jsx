@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 
-
 export default function Dashboard({ title }) {
   const { user } = useAuth();
   return (
@@ -12,8 +11,8 @@ export default function Dashboard({ title }) {
         Welcome, <strong>{user?.name}</strong>
       </p>
       <p>
-        Your role is <code>{user?.role}</code>. 
-        This area is restricted to your role only.
+        Your role is <code>{user?.role}</code>. This area is restricted to your
+        role only.
       </p>
       {user?.role === "STUDENT" && (
         <p>
