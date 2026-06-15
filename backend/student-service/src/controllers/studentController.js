@@ -5,7 +5,6 @@ const studentService = require("../services/studentService");
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
-
 exports.createStudent = asyncHandler(async (req, res) => {
   const student = await studentService.createStudent(req.body);
   res.status(201).json({

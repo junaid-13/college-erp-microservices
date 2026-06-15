@@ -37,7 +37,6 @@ async function createWithUniqueCode(data, prefix, year) {
   throw lastErr || httpError(500, "Failed to generate a unique student code");
 }
 
-
 async function createStudent(payload) {
   const { program, departmentPrefix, ...data } = payload;
 
@@ -57,7 +56,6 @@ async function createStudent(payload) {
   return createWithUniqueCode(data, prefix, admissionYear);
 }
 
-
 async function getStudents(query = {}) {
   const page = Math.max(parseInt(query.page, 10) || 1, 1);
   const limit = Math.min(Math.max(parseInt(query.limit, 10) || 20, 1), 100);
@@ -65,19 +63,16 @@ async function getStudents(query = {}) {
 
   const filter = {};
 
-
   if (query.status) {
     filter.status = String(query.status);
   } else {
     filter.status = { $ne: "DELETED" };
   }
 
-
   if (query.departmentId) filter.departmentId = String(query.departmentId);
   if (query.year) filter.year = Number(query.year);
   if (query.semester) filter.semester = Number(query.semester);
   if (query.section) filter.section = String(query.section).toUpperCase();
-
 
   if (query.search) {
     const rx = new RegExp(escapeRegExp(query.search), "i");
@@ -105,7 +100,6 @@ async function getStudents(query = {}) {
   };
 }
 
-
 async function getStudent(id) {
   const student = await Student.findById(id);
   if (!student || student.status === "DELETED") {
@@ -113,7 +107,6 @@ async function getStudent(id) {
   }
   return student;
 }
-
 
 async function updateStudent(id, payload) {
   const student = await Student.findById(id);
@@ -139,7 +132,6 @@ async function updateStudent(id, payload) {
   await student.save();
   return student;
 }
-
 
 async function deleteStudent(id) {
   const student = await Student.findById(id);
