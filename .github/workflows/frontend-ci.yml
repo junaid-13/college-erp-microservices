@@ -22,7 +22,7 @@ jobs:
 
       - name: Linting
         run: |
-          npx eslint ${{ github.sha }} -f html -o eslint-report${{ github.workflow }}
+          npx eslint . -f html -o eslint-report${{ github.workflow }}
           npx eslint . -f json -o eslint-report.json
 
       - name: Upload eslint report
