@@ -17,7 +17,7 @@ jobs:
             - name: setup Nodejs
               uses: actions/setup-node@v5
               with:
-                node-version: ">20"
+                node-version: "24"
                 cache: npm
             - run: npm ci
 
@@ -29,4 +29,4 @@ jobs:
               uses: actions/upload-artifact@v4
               with: 
                 name: eslint-report${{ github.workflow}}
-                path: eslint-report${{ github.workflow}}
+                path: eslint-report${{ github.workflow_sha }}
