@@ -24,17 +24,6 @@ jobs:
         run: |
           npx eslint . -f html -o eslint-report${{ github.workflow }}.html
           npx eslint . -f json -o eslint-report.json
-
-      - name: Upload eslint report
-        uses: actions/upload-artifact@v6
-        with: 
-          name: eslint-report${{ github.run_id}}
-          path: eslint-report${{ github.workflow }}
-            
-          # npx eslint . -f html -o eslint-report.html
-      - name: Run ESLint
-        run: |
-          npx eslint . -f json -o eslint-report.json
           ERROR_COUNT=$(jq '[.[].errorCount] | add' eslint-report.json)
           WARNING_COUNT=$(jq '[.[].warningCount] | add' eslint-report.json)
           echo "Errors: $ERROR_COUNT"
@@ -44,6 +33,26 @@ jobs:
           if [ "$ERROR_COUNT" -gt 0 ] || [ "$WARNING_COUNT" -gt 0 ]; then
             exit 1
           fi
+
+      - name: Upload eslint report
+        uses: actions/upload-artifact@v6
+        with: 
+          name: eslint-report${{ github.run_id}}
+          path: eslint-report${{ github.workflow }}.html
+            
+          # npx eslint . -f html -o eslint-report.html
+    #  - name: Run ESLint
+    #    run: |
+    #      npx eslint . -f json -o eslint-report.json
+    #      ERROR_COUNT=$(jq '[.[].errorCount] | add' eslint-report.json)
+    #      WARNING_COUNT=$(jq '[.[].warningCount] | add' eslint-report.json)
+    #      echo "Errors: $ERROR_COUNT"
+    #      echo "Warnings: $WARNING_COUNT"
+    #      echo "errors=$ERROR_COUNT" >> $GITHUB_OUTPUT
+    #      echo "warnings=$WARNING_COUNT" >> $GITHUB_OUTPUT
+    #      if [ "$ERROR_COUNT" -gt 0 ] || [ "$WARNING_COUNT" -gt 0 ]; then
+    #        exit 1
+    #      fi
   Formatting:
     runs-on: ubuntu-latest
     steps:
@@ -51,7 +60,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.MERN_ERP_TOKEN }}
-          ref: ${{ github.ref_name}}
           fetch-depth: 0
 
       - name: Setup node
