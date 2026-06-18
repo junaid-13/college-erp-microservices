@@ -23,7 +23,7 @@ jobs:
             - name: Linting
               run: |
                 npx eslint . -f html -o eslint-report${{ github.workflow }}
-                npx eslint . -f json -o eslint-report-${{ github.workflow_ref }}
+                npx eslint . -f json -o eslint-report.json
 
             - name: Upload eslint report
               uses: actions/upload-artifact@v4
@@ -34,8 +34,8 @@ jobs:
             - name: Checking for eslint problems
               id: eslint_check
               run: |
-                ERROR_COUNT=$(jq '[.[].errorCount] | add' eslint-report-${{ github.workflow_ref }})
-                WARNING_COUNT=$(jq '[.[].warningCount] | add' eslint-report-${{ github.workflow_ref }})
+                ERROR_COUNT=$(jq '[.[].errorCount] | add' eslint-report.json
+                WARNING_COUNT=$(jq '[.[].warningCount] | add' eslint-report.json
 
                 echo "errors=$ERROR_COUNT" >> $GITHUB_OUTPUT
                 echo "warnings=$WARNNING_COUNT" >> $GITHUB_OUTPUT
