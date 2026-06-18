@@ -33,7 +33,7 @@ jobs:
             
             - name: Checking for eslint problems
               id: eslint_check
-              run:
+              run: |
                 ERROR_COUNT=$(jq '[.[].errorCount] | add' eslint-report-${{ github.workflow_ref }})
                 WARNING_COUNT=$(jq '[.[].warningCount] | add' eslint-report-${{ github.workflow_ref }})
 
