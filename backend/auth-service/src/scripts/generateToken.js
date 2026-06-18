@@ -12,13 +12,14 @@
  */
 
 const loadEnv = require("../../../../shared/config/env");
-const connectMongo = require("../../../../shared/database/mongodb");
-const logger = require("../../../../shared/logger/logger");
-loadEnv({ required: ["MONGODB_URI"] });
+const connectMongo =require("../../../../shared/database/mongodb");
+const logger =require("../../../../shared/logger/logger");
 const RefreshToken = require("../models/RefreshToken");
 const User = require("../models/User");
 const { generateAccessToken, verifyAccessToken } = require("../utils/jwt");
 const { generateRefreshToken } = require("../utils/refreshToken");
+
+loadEnv({ required: ["MONGODB_URI"] });
 
 async function run() {
   // Email comes from the first CLI argument (or the SEED_TOKEN_EMAIL env var).

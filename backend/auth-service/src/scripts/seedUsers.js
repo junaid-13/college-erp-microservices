@@ -5,9 +5,10 @@
 const loadEnv = require("../../../../shared/config/env");
 const connectMongo = require("../../../../shared/database/mongodb");
 const logger = require("../../../../shared/logger/logger");
-loadEnv({ required: ["MONGODB_URI"] });
 const User = require("../models/User");
 const { hashPassword } = require("../utils/password");
+
+loadEnv({ required: ["MONGODB_URI"] });
 
 const seeds = [
   {
