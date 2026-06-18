@@ -51,10 +51,7 @@ function BooksSection({ title, books, showReturn }) {
 
           {!books.length && (
             <tr>
-              <td
-                colSpan={showReturn ? 5 : 4}
-                style={{ textAlign: "center" }}
-              >
+              <td colSpan={showReturn ? 5 : 4} style={{ textAlign: "center" }}>
                 None
               </td>
             </tr>
@@ -96,17 +93,9 @@ export default function MyBooks() {
         </p>
       )}
 
-      <BooksSection
-        title="Current"
-        books={data.current}
-        showReturn={false}
-      />
+      <BooksSection title="Current" books={data.current} showReturn={false} />
 
-      <BooksSection
-        title="Returned"
-        books={data.returned}
-        showReturn
-      />
+      <BooksSection title="Returned" books={data.returned} showReturn />
     </div>
   );
 }

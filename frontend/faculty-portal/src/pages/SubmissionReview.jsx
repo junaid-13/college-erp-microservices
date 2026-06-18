@@ -66,12 +66,7 @@ function SubmissionTable({ subs, setDraft, grade }) {
 
       <tbody>
         {subs.map((s) => (
-          <SubmissionRow
-            key={s._id}
-            s={s}
-            setDraft={setDraft}
-            grade={grade}
-          />
+          <SubmissionRow key={s._id} s={s} setDraft={setDraft} grade={grade} />
         ))}
 
         {!subs.length && (
@@ -152,11 +147,7 @@ export default function SubmissionReview() {
 
       {error && <div className="error-banner">{error}</div>}
 
-      <SubmissionTable
-        subs={subs}
-        setDraft={setDraft}
-        grade={grade}
-      />
+      <SubmissionTable subs={subs} setDraft={setDraft} grade={grade} />
     </div>
   );
 }

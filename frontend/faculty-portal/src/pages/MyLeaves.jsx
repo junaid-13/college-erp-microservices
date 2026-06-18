@@ -9,13 +9,7 @@ import { statusClass } from "../utils/leaveHelpers";
  * Supports cancelling pending requests and viewing the status timeline.
  */
 
-function LeaveRow({
-  l,
-  openId,
-  timeline,
-  cancel,
-  toggleTimeline,
-}) {
+function LeaveRow({ l, openId, timeline, cancel, toggleTimeline }) {
   return (
     <Fragment>
       <tr>

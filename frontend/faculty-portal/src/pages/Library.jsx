@@ -117,9 +117,7 @@ export default function Library() {
       const res = await libraryService.getBooks(params);
 
       setBooks(res.data || []);
-      setPagination(
-        res.pagination || { page: 1, totalPages: 1, total: 0 },
-      );
+      setPagination(res.pagination || { page: 1, totalPages: 1, total: 0 });
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load catalog");
     } finally {
@@ -135,21 +133,13 @@ export default function Library() {
     <div className="page">
       <h2>Library Catalog ({pagination.total})</h2>
 
-      <SearchForm
-        search={search}
-        setSearch={setSearch}
-        setPage={setPage}
-      />
+      <SearchForm search={search} setSearch={setSearch} setPage={setPage} />
 
       {error && <div className="error-banner">{error}</div>}
 
       {loading ? <p>Loading…</p> : <BooksTable books={books} />}
 
-      <Pagination
-        page={page}
-        pagination={pagination}
-        setPage={setPage}
-      />
+      <Pagination page={page} pagination={pagination} setPage={setPage} />
     </div>
   );
 }

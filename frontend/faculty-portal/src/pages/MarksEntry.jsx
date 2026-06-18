@@ -53,13 +53,7 @@ function MarksFilters({
   );
 }
 
-function RosterBuilder({
-  roster,
-  setRoster,
-  buildRoster,
-  subjectId,
-  examId,
-}) {
+function RosterBuilder({ roster, setRoster, buildRoster, subjectId, examId }) {
   return (
     <>
       <label style={{ display: "block", marginTop: "0.75rem" }}>

@@ -32,13 +32,7 @@ function EditAssessment({ editing, handleUpdate, setEditing }) {
   );
 }
 
-function AssessmentsTable({
-  items,
-  publish,
-  setEditing,
-  navigate,
-  fmtDate,
-}) {
+function AssessmentsTable({ items, publish, setEditing, navigate, fmtDate }) {
   return (
     <table className="data-table">
       <thead>
@@ -75,9 +69,7 @@ function AssessmentsTable({
               )}
 
               <button
-                onClick={() =>
-                  navigate(`/assessments/${a._id}/submissions`)
-                }
+                onClick={() => navigate(`/assessments/${a._id}/submissions`)}
               >
                 Submissions
               </button>
