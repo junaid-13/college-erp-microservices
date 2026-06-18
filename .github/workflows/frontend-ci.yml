@@ -22,7 +22,7 @@ jobs:
 
             - name: Linting
               run: |
-                npx eslint . -f json -o eslint-report${{ github.workflow }}
+                npx eslint . -f html -o eslint-report${{ github.workflow }}
 
             - name: Upload eslint report
               uses: actions/upload-artifact@v4
