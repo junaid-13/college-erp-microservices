@@ -1,0 +1,46 @@
+name: CI-feature
+on:
+  push:
+    branches:
+      - "feat/**"
+jobs:
+  Linting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.MERN_ERP_TOKEN }}
+          ref: ${{ github.ref_name}}
+          fetch-depth: 0
+      - name: setup Nodejs
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+
+      - name: Linting
+        run: |
+          npx eslint . -f html -o eslint-report${{ github.workflow }}
+          npx eslint . -f json -o eslint-report.json
+
+      - name: Upload eslint report
+        uses: actions/upload-artifact@v6
+        with: 
+          name: eslint-report${{ github.workflow_sha}}
+          path: eslint-report${{ github.workflow }}
+            
+      - name: Run ESLint
+        run: |
+          npx eslint . -f html -o eslint-report.html
+          npx eslint . -f json -o eslint-report.js
+          ERROR_COUNT=$(jq '[.[].errorCount] | add' eslint-report.json)
+          WARNING_COUNT=$(jq '[.[].warningCount] | add' eslint-report.jso
+          echo "Errors: $ERROR_COUNT"
+          echo "Warnings: $WARNING_COUN
+          echo "errors=$ERROR_COUNT" >> $GITHUB_OUTPUT
+          echo "warnings=$WARNING_COUNT" >> $GITHUB_OUTP
+          if [ "$ERROR_COUNT" -gt 0 ] || [ "$WARNING_COUNT" -gt 0 ]; then
+            exit 1
+          fi
