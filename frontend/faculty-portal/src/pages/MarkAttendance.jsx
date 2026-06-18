@@ -61,17 +61,11 @@ function AttendanceMeta({ meta, setMeta }) {
   );
 }
 
-function RosterBuilder({
-  roster,
-  setRoster,
-  buildRoster,
-  subjectId,
-}) {
+function RosterBuilder({ roster, setRoster, buildRoster, subjectId }) {
   return (
     <>
       <label style={{ display: "block", marginTop: "0.75rem" }}>
         Class Roster (student ids, comma/space separated)
-
         <textarea
           rows="3"
           value={roster}
