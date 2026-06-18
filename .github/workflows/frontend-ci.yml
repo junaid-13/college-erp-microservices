@@ -40,6 +40,6 @@ jobs:
                 echo "errors=$ERROR_COUNT" >> $GITHUB_OUTPUT
                 echo "warnings=$WARNNING_COUNT" >> $GITHUB_OUTPUT
 
-                if [ "$ERROR_COUNT" -gt 0 ] || [ "$WARNING_COUNT" -gt 0]; then
+                if [ "$ERROR_COUNT" -gt 0 ] || [ "$WARNING_COUNT" -gt 0 ]; then
                   exit 1
                 fi
