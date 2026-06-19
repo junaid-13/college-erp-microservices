@@ -15,7 +15,20 @@ const EMAIL_TAKEN = "A student with this email already exists";
 const STUDENT_NOT_FOUND = "Student not found";
 
 function isDuplicateKey(err, field) {
-  return err.code === 11000 && err.keyPattern && err.keyPattern[field];
+  if (!err || err.code !== 11000 || !err.keyPattern) {
+    return false;
+  }
+
+  switch (field) {
+    case "studentCode":
+      return Boolean(err.keyPattern.studentCode);
+
+    case "email":
+      return Boolean(err.keyPattern.email);
+
+    default:
+      return false;
+  }
 }
 
 // Generate code with a small retry loop to survive races on the unique index.
@@ -75,12 +88,13 @@ async function getStudents(query = {}) {
   if (query.section) filter.section = String(query.section).toUpperCase();
 
   if (query.search) {
-    const rx = new RegExp(escapeRegExp(query.search), "i");
+    const pattern = escapeRegExp(query.search);
+
     filter.$or = [
-      { firstName: rx },
-      { lastName: rx },
-      { email: rx },
-      { studentCode: rx },
+      { firstName: { $regex: pattern, $options: "i" } },
+      { lastName: { $regex: pattern, $options: "i" } },
+      { email: { $regex: pattern, $options: "i" } },
+      { studentCode: { $regex: pattern, $options: "i" } },
     ];
   }
 
