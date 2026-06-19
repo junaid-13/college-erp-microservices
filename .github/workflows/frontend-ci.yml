@@ -89,6 +89,8 @@ jobs:
 
       - name: Run git-leaks
         uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
 
       - name: Upload Gitleaks Report
         if: always()
