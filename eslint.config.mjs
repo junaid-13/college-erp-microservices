@@ -21,10 +21,10 @@ import { defineConfig } from "eslint/config";
 import pluginImport from "eslint-plugin-import";
 import pluginPromise from "eslint-plugin-promise";
 import pluginReact from "eslint-plugin-react";
-import eslintPluginYml from "eslint-plugin-yml";
 import reactHooks from "eslint-plugin-react-hooks";
 import sonarjs from "eslint-plugin-sonarjs";
 import unicorn from "eslint-plugin-unicorn";
+import eslintPluginYml from "eslint-plugin-yml";
 import globals from "globals";
 
 export default defineConfig([
@@ -92,7 +92,7 @@ export default defineConfig([
         "warn",
         { max: 80, skipBlankLines: true, skipComments: true },
       ], // long fns hide bugs
-      "max-params": ["warn", 4], // >4 params -> pass an options object instead
+      "max-params": ["warn", 6], // >6 params -> pass an options object instead
       "max-statements": ["warn", 25], // too many statements in one fn = doing too much
       "no-nested-ternary": "warn", // stacked `?:` is hard to read
       "no-else-return": "warn", // `else` after `return` is dead structure

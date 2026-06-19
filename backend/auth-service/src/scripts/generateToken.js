@@ -12,8 +12,8 @@
  */
 
 const loadEnv = require("../../../../shared/config/env");
-const connectMongo =require("../../../../shared/database/mongodb");
-const logger =require("../../../../shared/logger/logger");
+const connectMongo = require("../../../../shared/database/mongodb");
+const logger = require("../../../../shared/logger/logger");
 const RefreshToken = require("../models/RefreshToken");
 const User = require("../models/User");
 const { generateAccessToken, verifyAccessToken } = require("../utils/jwt");
