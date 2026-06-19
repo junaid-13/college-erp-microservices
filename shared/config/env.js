@@ -18,9 +18,7 @@ function loadEnv(options = {}) {
     // dotenv not installed — assume env is provided by the runtime/PM2.
   }
 
-  const required = Array.isArray(options.required)
-    ? options.required
-    : [];
+  const required = Array.isArray(options.required) ? options.required : [];
 
   const missing = required.filter((key) => {
     if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
