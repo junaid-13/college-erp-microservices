@@ -29,9 +29,7 @@ function BasicFields({ form, errors, set }) {
           value={form.title}
           onChange={(e) => set("title", e.target.value)}
         />
-        {errors.title && (
-          <span className="field-error">{errors.title}</span>
-        )}
+        {errors.title && <span className="field-error">{errors.title}</span>}
       </label>
 
       <label>
@@ -173,16 +171,9 @@ export default function AssessmentForm({
       <fieldset>
         <legend>Assessment</legend>
 
-        <BasicFields
-          form={form}
-          errors={errors}
-          set={set}
-        />
+        <BasicFields form={form} errors={errors} set={set} />
 
-        <AdvancedFields
-          form={form}
-          set={set}
-        />
+        <AdvancedFields form={form} set={set} />
       </fieldset>
 
       <button type="submit" disabled={submitting}>
