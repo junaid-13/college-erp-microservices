@@ -23,11 +23,11 @@ import pluginImport from "eslint-plugin-import";
 import pluginNoUnsanitized from "eslint-plugin-no-unsanitized";
 import pluginPromise from "eslint-plugin-promise";
 import pluginReact from "eslint-plugin-react";
-import pluginSecurity from "eslint-plugin-security";
 import reactHooks from "eslint-plugin-react-hooks";
 import pluginSecurity from "eslint-plugin-security";
 import sonarjs from "eslint-plugin-sonarjs";
 import unicorn from "eslint-plugin-unicorn";
+import eslintPluginYml from "eslint-plugin-yml";
 import globals from "globals";
 
 export default defineConfig([
