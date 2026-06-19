@@ -21,24 +21,33 @@ async function generateStudentCode({ prefix, year }) {
   const deptPrefix = String(prefix || "GEN")
     .toUpperCase()
     .replace(/[^A-Z]/g, "");
+
   const admissionYear = year || new Date().getFullYear();
   const base = `${deptPrefix}${admissionYear}`;
 
   // Find the latest code for this prefix+year scope.
   const last = await Student.findOne({
-    studentCode: new RegExp(`^${base}\\d+$`),
+    studentCode: {
+      $regex: `^${base}[0-9]+$`,
+    },
   })
     .sort({ studentCode: -1 })
     .select("studentCode")
     .lean();
 
   let next = 1;
+
   if (last && last.studentCode) {
     const seq = parseInt(last.studentCode.slice(base.length), 10);
-    if (!Number.isNaN(seq)) next = seq + 1;
+
+    if (!Number.isNaN(seq)) {
+      next = seq + 1;
+    }
   }
 
   return `${base}${String(next).padStart(3, "0")}`;
 }
 
-module.exports = { generateStudentCode };
+module.exports = {
+  generateStudentCode,
+};

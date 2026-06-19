@@ -17,15 +17,14 @@
 // This keeps the build green while still reporting every smell.
 
 import js from "@eslint/js";
-import configPrettier from "eslint-config-prettier";
 import { defineConfig } from "eslint/config";
+import configPrettier from "eslint-config-prettier";
 import pluginImport from "eslint-plugin-import";
 import pluginNoUnsanitized from "eslint-plugin-no-unsanitized";
 import pluginPromise from "eslint-plugin-promise";
 import pluginReact from "eslint-plugin-react";
-import pluginSecurity from "eslint-plugin-security";
-import eslintPluginYml from "eslint-plugin-yml";
 import reactHooks from "eslint-plugin-react-hooks";
+import pluginSecurity from "eslint-plugin-security";
 import sonarjs from "eslint-plugin-sonarjs";
 import unicorn from "eslint-plugin-unicorn";
 import eslintPluginYml from "eslint-plugin-yml";
@@ -260,7 +259,7 @@ export default defineConfig([
   // 4. Tests - Node built-in test runner; relax size/complexity limits.
   // ---------------------------------------------------------------------------
   {
-    files: ["**/tests/**/*.{js,jsx}", "**/*.test.{js,jsx}"],
+    files: ["**/tests/**/*.{js,jsx,cjs}", "**/*.test.{js,jsx,cjs}"],
     languageOptions: { globals: { ...globals.node } },
     rules: {
       "max-lines-per-function": "off", // test blocks are legitimately long

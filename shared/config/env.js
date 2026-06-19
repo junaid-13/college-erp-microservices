@@ -18,8 +18,17 @@ function loadEnv(options = {}) {
     // dotenv not installed — assume env is provided by the runtime/PM2.
   }
 
-  const required = options.required || [];
-  const missing = required.filter((key) => !process.env[key]);
+  const required = Array.isArray(options.required) ? options.required : [];
+
+  const missing = required.filter((key) => {
+    if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
+      return true;
+    }
+
+    const value = Reflect.get(process.env, key);
+
+    return value === undefined || value === null || value === "";
+  });
 
   if (missing.length) {
     throw new Error(

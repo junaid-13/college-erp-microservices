@@ -11,17 +11,19 @@ const {
 const logger = require("../logger/logger");
 
 // Allowed attachment content types (Task 10.17, extended for Task 13.5).
-const ALLOWED_MIME = {
-  "application/pdf": "pdf",
-  "image/jpeg": "jpg",
-  "image/jpg": "jpg",
-  "image/png": "png",
-  "application/msword": "doc",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+const ALLOWED_MIME = new Map([
+  ["application/pdf", "pdf"],
+  ["image/jpeg", "jpg"],
+  ["image/jpg", "jpg"],
+  ["image/png", "png"],
+  ["application/msword", "doc"],
+  [
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "docx",
-  "application/zip": "zip",
-  "application/x-zip-compressed": "zip",
-};
+  ],
+  ["application/zip", "zip"],
+  ["application/x-zip-compressed", "zip"],
+]);
 
 let client = null;
 
@@ -40,8 +42,6 @@ function getS3Client() {
 
   client = new S3Client({
     region,
-    // If keys are absent, the SDK falls back to the default credential chain
-    // (IAM role, shared config, etc.).
     credentials:
       accessKeyId && secretAccessKey
         ? { accessKeyId, secretAccessKey }
@@ -55,7 +55,7 @@ function getS3Client() {
 /**
  * Verify that the configured bucket exists and is reachable.
  *
- * @param {string} [bucket] Defaults to process.env.AWS_S3_BUCKET.
+ * @param {string} [bucket]
  * @returns {Promise<boolean>}
  */
 async function verifyBucket(bucket = process.env.AWS_S3_BUCKET) {
@@ -63,8 +63,14 @@ async function verifyBucket(bucket = process.env.AWS_S3_BUCKET) {
     logger.warn("[s3] AWS_S3_BUCKET not set; skipping bucket verification.");
     return false;
   }
+
   try {
-    await getS3Client().send(new HeadBucketCommand({ Bucket: bucket }));
+    await getS3Client().send(
+      new HeadBucketCommand({
+        Bucket: bucket,
+      }),
+    );
+
     logger.info(`[s3] Bucket connection verified: ${bucket}`);
     return true;
   } catch (err) {
@@ -76,15 +82,14 @@ async function verifyBucket(bucket = process.env.AWS_S3_BUCKET) {
 }
 
 /**
- * Upload a file buffer to S3 and return its public/object URL (Task 10.17).
- * Validates the content type against the allowed list (PDF/JPG/PNG).
+ * Upload a file buffer to S3 and return its public/object URL.
  *
  * @param {Object} opts
  * @param {Buffer} opts.buffer
  * @param {string} opts.mimeType
- * @param {string} [opts.keyPrefix]  folder prefix, e.g. "leaves/"
+ * @param {string} [opts.keyPrefix]
  * @param {string} [opts.bucket]
- * @returns {Promise<string>} object URL
+ * @returns {Promise<string>}
  */
 async function uploadFile({
   buffer,
@@ -92,32 +97,43 @@ async function uploadFile({
   keyPrefix = "uploads/",
   bucket = process.env.AWS_S3_BUCKET,
 }) {
-  if (!ALLOWED_MIME[mimeType]) {
+  const ext = ALLOWED_MIME.get(mimeType);
+
+  if (!ext) {
     const err = new Error("Unsupported file type. Allowed: PDF, JPG, PNG");
     err.status = 400;
     throw err;
   }
+
   if (!bucket) {
     const err = new Error("AWS_S3_BUCKET is not configured");
     err.status = 500;
     throw err;
   }
 
-  const ext = ALLOWED_MIME[mimeType];
-  const key = `${keyPrefix}${crypto.randomBytes(16).toString("hex")}.${ext}`;
+  const safePrefix = String(keyPrefix).replace(/[^a-zA-Z0-9/_-]/g, "");
 
-  await getS3Client().send(
-    new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      Body: buffer,
-      ContentType: mimeType,
-    }),
-  );
+  const key = [
+    safePrefix,
+    crypto.randomBytes(16).toString("hex"),
+    ".",
+    ext,
+  ].join("");
+
+  const uploadParams = {
+    Bucket: bucket,
+    Key: key,
+    Body: buffer,
+    ContentType: mimeType,
+  };
+
+  await getS3Client().send(new PutObjectCommand(uploadParams));
 
   const region = process.env.AWS_REGION || "ap-south-1";
   const url = `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
+
   logger.info(`[s3] Uploaded attachment: ${url}`);
+
   return url;
 }
 
