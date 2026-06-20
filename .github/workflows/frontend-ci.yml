@@ -95,4 +95,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
           GITLEAKS_ENABLE_SUMMARY: true
           GITLEAKS_ENABLE_UPLOAD_ARTIFACT: true
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24= true
