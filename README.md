@@ -1,12 +1,18 @@
 # College ERP
 
-A microservices-based College Enterprise Resource Planning system.
+Modern College ERP powered by microservices, enabling seamless academic, administrative, library, attendance, and payroll management.
+
+## Project Summary
+
+College ERP is a full-stack, microservices-based Enterprise Resource Planning platform designed to streamline academic and administrative operations within educational institutions. The system provides dedicated web portals for students, faculty, department heads, administrators, librarians, and payroll administrators, ensuring role-based access and efficient workflow management.
+
+Built with React (Vite) on the frontend and Node.js/Express on the backend, the platform follows a scalable microservices architecture with services for authentication, student and faculty management, attendance tracking, assessments, marks, timetables, leave management, library operations, payroll processing, notifications, and more. AWS S3 is used for cloud storage, and PM2 manages service deployment and monitoring through a centralized API gateway.
 
 ## Tech Stack
 
 - **Frontend:** ReactJS (Vite)
 - **Backend:** NodeJS, ExpressJS
-- **Database:** MongoDB (Atlas)
+- **Database:** MongoDB
 - **Cloud:** AWS (S3)
 - **Process Manager:** PM2
 
