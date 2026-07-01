@@ -129,23 +129,32 @@ jobs:
         with:
           token: ${{ secrets.MERN_ERP_TOKEN }}
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+            node-version: "24"
+            cache: npm
+
+      - name: Install dependencies college-erp
+        run: |
+          npm ci
+
       - name: Checkout code college-erp-test
         uses: actions/checkout@v5
         with:
           repository: junaid-13/college-erp-microservices-testing
           token: ${{ secrets.TEST_TOKEN }}
 
-      - name: Setup Node.js
+      - name: Setup Node.js for college-erp-test
         uses: actions/setup-node@v5
         with:
-          node-version: "24"
-          cache: npm
-
-      - name: Install dependencies
+            node-version: "24"
+            cache: npm
+      
+      - name: Install dependencies college-erp-test
         run: |
-          pwd
           npm ci
-
+          
       - name: Run Frontend Unit Tests
         if: needs.Finding-the-differenece.outputs.frontend_changed == 'true'
         run: |
