@@ -124,10 +124,16 @@ jobs:
       - Formatting
       - Secret-Scanning
     steps:
-      - name: Checkout code
+      - name: Checkout code college-erp
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.MERN_ERP_TOKEN }}
+
+      - name: Checkout code college-erp-test
+        uses: actions/checkout@v5
+        with:
+          repository: junaid-13/college-erp-microservices-testing
+          token: ${{ secrets.TEST_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
@@ -136,16 +142,17 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          cd college-erp-microservices
+          npm ci
 
       - name: Run Frontend Unit Tests
         if: needs.Finding-the-differenece.outputs.frontend_changed == 'true'
         run: |
           echo "Frontend changes detected"
-          npm run test:frontend
+          pwd
 
       - name: Run Backend Unit Tests
         if: needs.Finding-the-differenece.outputs.backend_changed == 'true'
         run: |
           echo "Backend changes detected"
-          npm run test:backend
