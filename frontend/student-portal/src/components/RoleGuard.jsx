@@ -6,7 +6,6 @@ import { useAuth } from "../context/AuthContext";
  * Restrict a route to specific roles.
  *
  * Usage:
- *   <RoleGuard allow={['ADMIN']}><AdminDashboard /></RoleGuard>
  *   <Route element={<RoleGuard allow={['HOD']} />}>...</Route>
  *
  * Unauthorized roles are redirected to /unauthorized.
