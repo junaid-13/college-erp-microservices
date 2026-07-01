@@ -31,7 +31,7 @@ export default function RoleGuard({ allow = [], children }) {
     allowedRoles.length === 0 || allowedRoles.includes(user?.role);
 
   if (loading) {
-    return <p style={{ textAlign: "center" }}>Loading…</p>;
+    return <p style={{ textAlign: "center" }}>Loading...</p>;
   }
 
   if (!isAuthenticated) {
