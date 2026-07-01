@@ -23,7 +23,6 @@ export default function RoleGuard({ allow = [], children }) {
 }
 */
 
-
 export default function RoleGuard({ allow = [], children }) {
   const { user, isAuthenticated, loading } = useAuth();
 
@@ -36,13 +35,7 @@ export default function RoleGuard({ allow = [], children }) {
   }
 
   if (!isAuthenticated) {
-    return (
-      <Navigate
-        to="/login"
-        state={{ from: location }}
-        replace
-      />
-    );
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (!isAuthorized) {
