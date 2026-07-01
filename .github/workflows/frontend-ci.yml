@@ -152,7 +152,7 @@ jobs:
         working-directory: erp-test
         run: |
           npm install
-      
+
       - name: Debug workspace
         working-directory: erp-test
         run: |
