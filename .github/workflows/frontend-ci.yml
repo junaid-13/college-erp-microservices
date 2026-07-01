@@ -132,8 +132,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-            node-version: "24"
-            cache: npm
+          node-version: "24"
+          cache: npm
 
       - name: Install dependencies college-erp
         run: |
@@ -148,13 +148,13 @@ jobs:
       - name: Setup Node.js for college-erp-test
         uses: actions/setup-node@v5
         with:
-            node-version: "24"
-            cache: npm
-      
+          node-version: "24"
+          cache: npm
+
       - name: Install dependencies college-erp-test
         run: |
           npm ci
-          
+
       - name: Run Frontend Unit Tests
         if: needs.Finding-the-differenece.outputs.frontend_changed == 'true'
         run: |
