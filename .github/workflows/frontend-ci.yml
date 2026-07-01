@@ -128,30 +128,28 @@ jobs:
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.MERN_ERP_TOKEN }}
+          path: erp
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: "24"
           cache: npm
+          cache-dependency-path: "erp/package-lock.json"
 
-      - name: Install dependencies college-erp
-        run: |
-          npm ci
+      - name: Install ERP dependencies
+        working-directory: erp
+        run: npm ci
 
       - name: Checkout code college-erp-test
         uses: actions/checkout@v5
         with:
           repository: junaid-13/college-erp-microservices-testing
           token: ${{ secrets.TEST_TOKEN }}
-
-      - name: Setup Node.js for college-erp-test
-        uses: actions/setup-node@v5
-        with:
-          node-version: "24"
-          cache: npm
+          path: erp-test
 
       - name: Install dependencies college-erp-test
+        working-directory: erp-test
         run: |
           npm ci
 
