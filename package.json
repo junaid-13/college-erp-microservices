@@ -17,7 +17,9 @@
     "pm2:logs": "pm2 logs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prettier:check": "prettier --check ."
+    "prettier:check": "prettier --check .",
+    "test:frontend": "vitest run",
+    "test:backend": "jest"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -39,5 +41,9 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-security": "^4.0.1",
     "prettier": "^3.6.2"
+  },
+  "testDependencies": {
+    "vitest": "4.1.7",
+    "jest": "30.4"
   }
 }
