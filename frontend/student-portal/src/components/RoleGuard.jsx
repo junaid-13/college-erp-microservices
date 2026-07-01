@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-
+import React from "react";
 import { useAuth } from "../context/AuthContext";
 
 /**
@@ -19,6 +19,6 @@ export default function RoleGuard({ allow = [], children }) {
   if (!allow.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
-
+  console.log("RoleGuard: user role is allowed")
   return children ? children : <Outlet />;
 }
