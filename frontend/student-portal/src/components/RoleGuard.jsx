@@ -11,16 +11,6 @@ import { useAuth } from "../context/AuthContext";
  *
  * Unauthorized roles are redirected to /unauthorized.
  
-export default function RoleGuard({ allow = [], children }) {
-  const { user, isAuthenticated, loading } = useAuth();
-
-  if (loading) return <p style={{ textAlign: "center" }}>Loading…</p>;
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (!allow.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-  return children ? children : <Outlet />;
-}
 */
 
 export default function RoleGuard({ allow = [], children }) {
