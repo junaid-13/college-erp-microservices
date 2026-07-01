@@ -148,6 +148,13 @@ jobs:
           token: ${{ secrets.TEST_TOKEN }}
           path: erp-test
 
+      - name: Debug workspace
+        working-directory: erp-test
+        run: |
+          pwd
+          ls -la
+          find . -maxdepth 2 -type f | head -50
+
       - name: Install dependencies college-erp-test
         working-directory: erp-test
         run: |
