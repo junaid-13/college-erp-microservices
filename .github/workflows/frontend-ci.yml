@@ -157,7 +157,7 @@ jobs:
         if: needs.Finding-the-differenece.outputs.frontend_changed == 'true'
         run: |
           echo "Frontend changes detected"
-          pwd
+          npx vitest --run
 
       - name: Run Backend Unit Tests
         if: needs.Finding-the-differenece.outputs.backend_changed == 'true'
