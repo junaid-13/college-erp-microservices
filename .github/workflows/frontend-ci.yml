@@ -165,7 +165,7 @@ jobs:
         working-directory: erp-test
         run: |
           echo "Frontend changes detected"
-          npx vitest --run
+          npx vitest --run --coverage
 
       - name: Run Backend Unit Tests
         if: needs.Finding-the-differenece.outputs.backend_changed == 'true'
