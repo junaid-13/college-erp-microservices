@@ -165,7 +165,19 @@ jobs:
         working-directory: erp-test
         run: |
           echo "Frontend changes detected"
-          npx vitest --run --coverage --reporter=html
+          npx vitest --run --coverage
+
+      # The vitest config writes the coverage report (text/json/html) to
+      # erp-test/coverage-vitest. Upload it even when tests fail
+      # (reportOnFailure is enabled) so the report is always downloadable.
+      - name: Upload coverage report
+        if: always() && needs.Finding-the-differenece.outputs.frontend_changed == 'true'
+        uses: actions/upload-artifact@v6
+        with:
+          name: vitest-coverage-report-${{ github.run_id }}
+          path: erp-test/coverage-vitest
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Run Backend Unit Tests
         if: needs.Finding-the-differenece.outputs.backend_changed == 'true'
