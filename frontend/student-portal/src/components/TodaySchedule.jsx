@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import timetableService from "../services/timetableService";
 
-/**
+/*
  * Today's schedule widget (Task 7.28). Student variant.
  * Shows current day's classes sorted chronologically.
  */

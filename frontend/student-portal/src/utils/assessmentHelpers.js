@@ -2,8 +2,9 @@
  * Pure helpers shared by the assessment UI.
  */
 
-/** True when now is past the due date. */
+/** True when now is past the due date. No due date means never past due. */
 export function isPastDue(dueDate, now = new Date()) {
+  if (dueDate == null) return false;
   return new Date(now).getTime() > new Date(dueDate).getTime();
 }
 
