@@ -131,15 +131,13 @@ jobs:
           node-version: "24"
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Check for vulnerabilities
-        run: npm audit --audit-level=high
-
-      - name: Generate HTML report
-        if: always()
-        run: npx npm-audit-html -o dependency-report.html
+      - name: Run dependency scan
+        uses: aquasecurity/trivy-action@v2
+        with:
+          scan-type: fs
+          format: template
+          template: "@contrib/html.tpl"
+          output: dependency-report.html
 
       - name: Upload report
         if: always()
