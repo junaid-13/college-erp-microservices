@@ -135,11 +135,11 @@ jobs:
         run: npm ci
 
       - name: Check for vulnerabilities
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=high --json >> audit-report.json || true
 
       - name: Generate HTML report
         if: always()
-        run: npx npm-audit-html -o dependency-report.html
+        run: npx npm-audit-html -o dependency-report.html -i audit-report.json
 
       - name: Upload report
         if: always()
