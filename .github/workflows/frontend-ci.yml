@@ -138,6 +138,8 @@ jobs:
           format: template
           template: "@contrib/html.tpl"
           output: dependency-report.html
+          scanners: vuln
+          vuln-type: library
 
       - name: Upload report
         if: always()
