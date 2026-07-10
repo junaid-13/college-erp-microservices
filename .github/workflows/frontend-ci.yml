@@ -117,23 +117,22 @@ jobs:
           GITLEAKS_ENABLE_UPLOAD_ARTIFACT: true
 
   Dependancy-scanning:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.MERN_ERP_TOKEN }}
-          fetch-depth: 1
+  runs-on: ubuntu-latest
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: "24"
-          cache: npm
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        token: ${{ secrets.MERN_ERP_TOKEN }}
+        fetch-depth: 1
 
-      - name: Install dependencies
-        run: npm install
+    - name: Setup Node.js
+      uses: actions/setup-node@v5
+      with:
+        node-version: "24"
+        cache: npm
 
+<<<<<<< HEAD
       - name: Run dependency scan
         uses: aquasecurity/trivy-action@v0.38.0
         with:
@@ -143,14 +142,36 @@ jobs:
           output: dependency-report.html
           scanners: vuln
           vuln-type: library
+=======
+    - name: Install dependencies
+      run: npm ci
+>>>>>>> 4677151e3a3aec8107a4302085b2b2d6d37488c0
 
-      - name: Upload report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency-report-${{ github.run_id }}
-          path: dependency-report.html
-          retention-days: 30
+    - name: Download Trivy HTML template
+      run: |
+        mkdir -p contrib
+        curl -fsSL \
+          https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl \
+          -o contrib/html.tpl
+
+    - name: Run dependency scan
+      uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        scan-type: fs
+        scanners: vuln
+        vuln-type: library
+        format: template
+        template: "@contrib/html.tpl"
+        output: dependency-report.html
+
+    - name: Upload report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: dependency-report-${{ github.run_id }}
+        path: dependency-report.html
+        if-no-files-found: warn
+        retention-days: 30
 
   Unit-Tests:
     runs-on: ubuntu-latest
