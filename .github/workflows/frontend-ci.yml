@@ -138,13 +138,11 @@ jobs:
           curl -L https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl \
           -o contrib/html.tpl
 
-      - name: Run dependency scan
+      - name: Run Trivy (Debug)
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
-          format: template
-          template: "@contrib/html.tpl"
-          output: dependency-report.html
+          format: table
           scanners: vuln
           vuln-type: library
 
