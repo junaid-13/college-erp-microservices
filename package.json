@@ -26,6 +26,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "admin-portal": "^1.0.0",
     "eslint": "^9.7.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-promise": "^7.3.0",
@@ -40,8 +41,11 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-security": "^4.0.1",
-    "prettier": "^3.6.2",
-    "npm-audit-html": "^1.5.0"
+    "npm-audit-html": "^1.5.0",
+    "prettier": "^3.6.2"
+  },
+  "overrides": {
+    "marked":"^18.0.0"
   },
   "testDependencies": {
     "vitest": "4.1.7",
