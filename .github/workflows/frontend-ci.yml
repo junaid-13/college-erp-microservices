@@ -136,11 +136,10 @@ jobs:
 
       - name: Check for vulnerabilities
         run: npm audit --audit-level=high
-      
+
       - name: Generate HTML report
         if: always()
         run: npx npm-audit-html -o dependency-report.html
-      
 
       - name: Upload report
         if: always()
@@ -217,4 +216,3 @@ jobs:
         if: needs.Finding-the-differenece.outputs.backend_changed == 'true'
         run: |
           echo "Backend changes detected"
-  
