@@ -132,7 +132,7 @@ jobs:
           cache: npm
 
       - name: Run dependency scan
-        uses: aquasecurity/trivy-action@v2
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           format: template
