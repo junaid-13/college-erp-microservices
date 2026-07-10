@@ -134,6 +134,9 @@ jobs:
       - name: Install dependencies
         run: |
           npm install
+          mkdir -p contrib
+          curl -L https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl \
+          -o contrib/html.tpl
 
       - name: Run dependency scan
         uses: aquasecurity/trivy-action@v0.36.0
