@@ -131,19 +131,8 @@ jobs:
           node-version: "24"
           cache: npm
 
-      - name: Verify manifests
-        run: |
-          pwd
-          ls -la
-          echo "package.json:"
-          cat package.json | head -5
-          echo
-          echo "package-lock.json:"
-          ls -lh package-lock.json
-
       - name: Install dependencies
         run: |
-          pwd
           npm install
           mkdir -p contrib
           curl -L https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl \
@@ -158,14 +147,16 @@ jobs:
           scanners: vuln
           vuln-type: library
 
-      - name: Run trivy cli
-        run: |
-          trivy --version
-          trivy fs . \
-          --scanners vuln \
-          --pkg-types library \
-          --format table \
-          --debug
+      - name: Run dependency scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          version: latest
+          scan-type: fs
+          format: template
+          template: contrib/html.tpl
+          output: dependency-report.html
+          scanners: vuln
+          vuln-type: library
 
       - name: Upload report
         if: always()
