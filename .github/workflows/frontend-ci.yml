@@ -150,12 +150,21 @@ jobs:
           -o contrib/html.tpl
 
       - name: Run Trivy (Debug)
-        uses: aquasecurity/trivy-action@v0.37.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           format: table
           scanners: vuln
           vuln-type: library
+
+      - name: Run trivy cli
+        run: |
+          trivy --version
+          trivy fs . \
+          --scanners vuln \
+          --pkg-types npm \
+          --format table \
+          --debug
 
       - name: Upload report
         if: always()
