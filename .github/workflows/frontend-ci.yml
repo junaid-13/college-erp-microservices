@@ -162,7 +162,7 @@ jobs:
           trivy --version
           trivy fs . \
           --scanners vuln \
-          --pkg-types npm \
+          --pkg-types library \
           --format table \
           --debug
 
