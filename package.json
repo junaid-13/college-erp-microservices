@@ -44,12 +44,6 @@
     "npm-audit-html": "^1.5.0",
     "prettier": "^3.6.2"
   },
-  "overrides": {
-    "marked": "^18.0.0",
-    "form-data": "^4.0.0",
-    "http-proxy-middleware": "^4.0.0",
-    "joi": "^17.9.2"
-  },
   "testDependencies": {
     "vitest": "4.1.7",
     "jest": "30.4"
