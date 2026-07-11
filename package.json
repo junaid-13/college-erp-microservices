@@ -12,6 +12,9 @@
     "dev:frontend": "npm run dev --workspaces --if-present --verbose",
     "build:frontend": "npm --workspace frontend/student-portal run build",
     "start:gateway": "node backend/api-gateway/src/server.js",
+    "pm2:start": "pm2 start infrastructure/pm2/ecosystem.config.js",
+    "pm2:stop": "pm2 stop infrastructure/pm2/ecosystem.config.js",
+    "pm2:logs": "pm2 logs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier:check": "prettier --check .",
@@ -23,12 +26,14 @@
   },
   "license": "MIT",
   "dependencies": {
+    "admin-portal": "^1.0.0",
     "eslint": "^9.7.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-promise": "^7.3.0",
     "eslint-plugin-sonarjs": "^4.0.3",
     "eslint-plugin-unicorn": "^65.0.1",
-    "eslint-plugin-yml": "^3.4.0"
+    "eslint-plugin-yml": "^3.4.0",
+    "pm2": "^7.0.1"
   },
   "devDependencies": {
     "eslint-config-prettier": "^10.1.8",
@@ -36,7 +41,14 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-security": "^4.0.1",
+    "npm-audit-html": "^1.5.0",
     "prettier": "^3.6.2"
+  },
+    "overrides": {
+    "marked":"^18.0.0",
+    "form-data": "^4.0.0",
+    "http-proxy-middleware":"^4.0.0",
+    "joi":"^17.9.2"
   },
   "testDependencies": {
     "vitest": "4.1.7",
