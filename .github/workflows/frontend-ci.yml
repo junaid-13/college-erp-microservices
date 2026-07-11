@@ -133,6 +133,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd college-erp-microservices/
           npm install
           mkdir -p contrib
           curl -L https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl \
