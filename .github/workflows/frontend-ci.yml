@@ -131,6 +131,16 @@ jobs:
           node-version: "24"
           cache: npm
 
+      - name: Verify manifests
+        run: |
+          pwd
+          ls -la
+          echo "package.json:"
+          cat package.json | head -5
+          echo
+          echo "package-lock.json:"
+          ls -lh package-lock.json
+
       - name: Install dependencies
         run: |
           pwd
