@@ -10,7 +10,7 @@ const router = express.Router();
 const TARGET = process.env.STUDENT_SERVICE_URL || "http://localhost:4002";
 const ROUTE = "/api/students";
 
-/**
+/*
  * Dedicated reverse proxy for the Student Service (Task 4.19).
  *
  * Forwards /api/students/* to the student-service. A valid JWT is required
