@@ -223,5 +223,7 @@ jobs:
 
       - name: Run Backend Unit Tests
         if: needs.Finding-the-differenece.outputs.backend_changed == 'true'
+        working-directory: erp-test
         run: |
           echo "Backend changes detected"
+          npx jest --coverage
