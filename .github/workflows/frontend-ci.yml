@@ -170,17 +170,17 @@ jobs:
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.MERN_ERP_TOKEN }}
-          path: erp
+          path: college-erp-microservices
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: "erp/package-lock.json"
+          cache-dependency-path: "college-erp-microservices/package-lock.json"
 
       - name: Install ERP dependencies
-        working-directory: erp
+        working-directory: college-erp-microservices
         run: npm ci
 
       - name: Checkout code college-erp-test
@@ -209,9 +209,7 @@ jobs:
           echo "Frontend changes detected"
           npx vitest --run --coverage
 
-      # The vitest config writes the coverage report (text/json/html) to
-      # erp-test/coverage-vitest. Upload it even when tests fail
-      # (reportOnFailure is enabled) so the report is always downloadable.
+
       - name: Upload coverage report
         if: always() && needs.Finding-the-differenece.outputs.frontend_changed == 'true'
         uses: actions/upload-artifact@v6
@@ -223,5 +221,7 @@ jobs:
 
       - name: Run Backend Unit Tests
         if: needs.Finding-the-differenece.outputs.backend_changed == 'true'
+        working-directory: erp-test
         run: |
           echo "Backend changes detected"
+          npx jest --coverage
