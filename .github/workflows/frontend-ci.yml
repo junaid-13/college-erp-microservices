@@ -228,3 +228,12 @@ jobs:
         run: |
           echo "Backend changes detected"
           npx jest --coverage
+
+      - name: Upload coverage report
+        if: always() && needs.Finding-the-differenece.outputs.backend_changed == 'true'
+        uses: actions/upload-artifact@v6
+        with:
+          name: jest-coverage-report-${{ github.run_id }}
+          path: erp-test/coverage-jest
+          if-no-files-found: warn
+          retention-days: 30
