@@ -209,7 +209,6 @@ jobs:
           echo "Frontend changes detected"
           npx vitest --run --coverage
 
-
       - name: Upload coverage report
         if: always() && needs.Finding-the-differenece.outputs.frontend_changed == 'true'
         uses: actions/upload-artifact@v6
