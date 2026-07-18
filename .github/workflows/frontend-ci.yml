@@ -239,15 +239,85 @@ jobs:
           path: erp-test/coverage-jest
           if-no-files-found: warn
           retention-days: 30
+  Metadata:
+    name: Generate Build Metadata
+    runs-on: ubuntu-latest
 
-      - name: Frontend building
-        if: needs.Finding-the-difference.outputs.frontend_changed == 'true' && steps.run-frontend-tests.outcome == 'success'
-        working-directory: college-erp-microservices/frontend
-        run: |
-          npm run build:frontend
+    outputs:
+      version: ${{ steps.metadata.outputs.version }}
+      build_number: ${{ steps.metadata.outputs.build_number }}
+      commit_sha: ${{ steps.metadata.outputs.commit_sha }}
+      short_sha: ${{ steps.metadata.outputs.short_sha }}
+      branch: ${{ steps.metadata.outputs.branch }}
+      build_date: ${{ steps.metadata.outputs.build_date }}
+      workflow: ${{ steps.metadata.outputs.workflow }}
+      run_id: ${{ steps.metadata.outputs.run_id }}
 
-      - name: Backend building
-        if: needs.Finding-the-difference.outputs.backend_changed == 'true' && steps.run-backend-tests.outcome == 'success'
-        working-directory: college-erp-microservices/backend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Generate build metadata
+        id: metadata
+        shell: bash
         run: |
-          npm run build:backend
+          BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          COMMIT_SHA="${GITHUB_SHA}"
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          BRANCH="${GITHUB_REF_NAME}"
+          BUILD_NUMBER="${GITHUB_RUN_NUMBER}"
+          RUN_ID="${GITHUB_RUN_ID}"
+          WORKFLOW="${GITHUB_WORKFLOW}"
+
+          VERSION="1.0.${SHORT_SHA}"
+
+          {
+            echo "version=${VERSION}"
+            echo "build_number=${BUILD_NUMBER}"
+            echo "commit_sha=${COMMIT_SHA}"
+            echo "short_sha=${SHORT_SHA}"
+            echo "branch=${BRANCH}"
+            echo "build_date=${BUILD_DATE}"
+            echo "workflow=${WORKFLOW}"
+            echo "run_id=${RUN_ID}"
+          } >> "$GITHUB_OUTPUT"
+
+  frontend-backend-building:
+    runs-on: ubuntu-latest
+    needs:
+      - Finding-the-difference
+      - Unit-Tests
+      - Metadata
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.MERN_ERP_TOKEN }}
+          fetch-depth: 1
+
+      - name: setup-node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
+        run: npm run build:frontend
+
+      - name: front-end image building
+        if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
+        run: docker build -t student-portal:${{ needs.Metadata.outputs.version }} ./frontend/student-portal
+
+      - name: backend image building
+        if: needs.Finding-the-difference.outputs.backend_changed == 'true'
+        run: docker build -t student-service:${{ needs.Metadata.outputs.version }} ./backend/student-service
+
+      - name: docker-images-listing
+        run: docker images

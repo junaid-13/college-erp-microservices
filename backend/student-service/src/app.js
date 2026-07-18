@@ -2,23 +2,35 @@
 
 const express = require("express");
 
+const {
+  buildHealthRouter,
+  mongoDependency,
+} = require("../../../shared/health/health");
 const logger = require("../../../shared/logger/logger");
+const metrics = require("../../../shared/metrics/metrics");
+const correlationId = require("../../../shared/middleware/correlationId");
 const buildCors = require("../../../shared/middleware/cors");
 const errorHandler = require("../../../shared/middleware/errorHandler");
 
-const healthRoutes = require("./routes/health.routes");
 const studentRoutes = require("./routes/studentRoutes");
 
 const app = express();
 
 app.use(buildCors());
+app.use(correlationId);
 app.use(express.json());
 app.use(logger.requestLogger);
+app.use(metrics.httpMetrics("student-service"));
 
-app.use("/health", healthRoutes);
+app.use(
+  "/health",
+  buildHealthRouter({
+    serviceName: "student-service",
+    dependencies: { mongo: mongoDependency() },
+  }),
+);
+app.get("/metrics", metrics.metricsHandler);
 
-// Student API. Mounted at root (the gateway strips the /api/students prefix)
-// and at /api/students (for direct service access during testing).
 app.use("/", studentRoutes);
 app.use("/api/students", studentRoutes);
 
