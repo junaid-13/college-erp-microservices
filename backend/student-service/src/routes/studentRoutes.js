@@ -2,6 +2,7 @@
 
 const express = require("express");
 
+const { audit } = require("../../../../shared/audit/audit");
 const authenticate = require("../../../../shared/middleware/authenticate");
 const authorize = require("../../../../shared/middleware/authorize");
 const controller = require("../controllers/studentController");
@@ -14,23 +15,21 @@ const {
 
 const router = express.Router();
 
-// All student routes require authentication.
 router.use(authenticate);
 
-// Student self-profile (Task 4.18 / 4.25). Declared before "/:id"
-// so "me" is not captured as an id.
+
 router.get(
   "/me",
   authorize("STUDENT", "HOD", "ADMIN"),
   controller.getOwnProfile,
 );
 
-// HOD-managed CRUD (Task 4.18). ADMIN allowed as a superset.
 const MANAGER = authorize("HOD", "ADMIN");
 
 router.post(
   "/",
   MANAGER,
+  audit("student.create", "student", { service: "student-service" }),
   validate(createStudentSchema),
   controller.createStudent,
 );
@@ -39,13 +38,20 @@ router.get("/:id", MANAGER, controller.getStudent);
 router.put(
   "/:id",
   MANAGER,
+  audit("student.update", "student", { service: "student-service" }),
   validate(updateStudentSchema),
   controller.updateStudent,
 );
-router.delete("/:id", MANAGER, controller.deleteStudent);
+router.delete(
+  "/:id",
+  MANAGER,
+  audit("student.delete", "student", { service: "student-service" }),
+  controller.deleteStudent,
+);
 router.patch(
   "/:id/status",
   MANAGER,
+  audit("student.status", "student", { service: "student-service" }),
   validate(statusSchema),
   controller.changeStatus,
 );
