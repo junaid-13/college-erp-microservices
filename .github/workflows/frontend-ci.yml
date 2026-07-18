@@ -11,7 +11,7 @@ on:
       - fix/**
 
 jobs:
-  Finding-the-differenece:
+  Finding-the-difference:
     runs-on: ubuntu-latest
 
     outputs:
@@ -164,7 +164,7 @@ jobs:
   Unit-Tests:
     runs-on: ubuntu-latest
     needs:
-      - Finding-the-differenece
+      - Finding-the-difference
       - Linting
       - Formatting
       - Secret-Scanning
@@ -207,7 +207,7 @@ jobs:
       #    find . -maxdepth 2 -type f | head -50
 
       - name: Run Frontend Unit Tests
-        if: needs.Finding-the-differenece.outputs.frontend_changed == 'true'
+        if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
         id: run-frontend-tests
         working-directory: erp-test
         run: |
@@ -215,7 +215,7 @@ jobs:
           npx vitest --run --coverage
 
       - name: Upload coverage report
-        if: always() && needs.Finding-the-differenece.outputs.frontend_changed == 'true'
+        if: always() && needs.Finding-the-difference.outputs.frontend_changed == 'true'
         uses: actions/upload-artifact@v6
         with:
           name: vitest-coverage-report-${{ github.run_id }}
@@ -224,14 +224,15 @@ jobs:
           retention-days: 30
 
       - name: Run Backend Unit Tests
-        if: needs.Finding-the-differenece.outputs.backend_changed == 'true'
+        if: needs.Finding-the-difference.outputs.backend_changed == 'true'
         working-directory: erp-test
+        id: run-backend-tests
         run: |
           echo "Backend changes detected"
           npx jest --coverage
 
       - name: Upload coverage report
-        if: always() && needs.Finding-the-differenece.outputs.backend_changed == 'true'
+        if: always() && needs.Finding-the-difference.outputs.backend_changed == 'true'
         uses: actions/upload-artifact@v6
         with:
           name: jest-coverage-report-${{ github.run_id }}
@@ -240,7 +241,13 @@ jobs:
           retention-days: 30
 
       - name: Frontend building
-        if: needs.Finding-the-differenece.outputs.frontend_changed == 'true' && steps.run-frontend-tests.outcome == 'success'
+        if: needs.Finding-the-difference.outputs.frontend_changed == 'true' && steps.run-frontend-tests.outcome == 'success'
         working-directory: college-erp-microservices/frontend
         run: |
           npm run build:frontend
+
+      - name: Backend building
+        if: needs.Finding-the-difference.outputs.backend_changed == 'true' && steps.run-backend-tests.outcome == 'success'
+        working-directory: college-erp-microservices/backend
+        run: |
+          npm run build:backend
