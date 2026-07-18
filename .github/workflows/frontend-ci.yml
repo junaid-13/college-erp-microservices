@@ -250,4 +250,4 @@ jobs:
         if: needs.Finding-the-difference.outputs.backend_changed == 'true' && steps.run-backend-tests.outcome == 'success'
         working-directory: college-erp-microservices/backend
         run: |
-          npm run build:backend
+          docker build -t student-service ./student-service
