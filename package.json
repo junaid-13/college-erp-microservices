@@ -19,7 +19,8 @@
     "lint:fix": "eslint . --fix",
     "prettier:check": "prettier --check .",
     "test:frontend": "vitest run",
-    "test:backend": "jest"
+    "test:backend": "jest",
+    "build:backend": "npm --workspace backend/student-service run build"
   },
   "engines": {
     "node": ">=18.0.0"
