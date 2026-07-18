@@ -143,7 +143,7 @@ jobs:
           -o contrib/html.tpl
 
       - name: Run dependency scan
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           version: latest
           scan-type: fs
@@ -289,15 +289,15 @@ jobs:
     needs:
       - Finding-the-difference
       - Unit-Tests
-      - Metadata 
-    
+      - Metadata
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.MERN_ERP_TOKEN }}
           fetch-depth: 1
-      
+
       - name: setup-node
         uses: actions/setup-node@v5
         with:
@@ -318,6 +318,6 @@ jobs:
       - name: backend image building
         if: needs.Finding-the-difference.outputs.backend_changed == 'true'
         run: docker build -t student-service:${{ needs.Metadata.outputs.version }} ./backend/student-service
-      
+
       - name: docker-images-listing
         run: docker images
