@@ -1,4 +1,4 @@
-FROM node:27-slim 
+FROM node:26-slim 
 WORKDIR /student-service/
 COPY package.json /student-service/
 COPY /src /student-service/src
