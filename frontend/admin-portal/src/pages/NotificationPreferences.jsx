@@ -1,11 +1,4 @@
-/**
- * Notification preferences (Task 15.25).
- *
- * Canonical shared page mirrored into each portal's pages/.
- * Toggles for email / in-app and per-module preferences.
- *
- * @param {object} service  the portal's notificationService client
- */
+
 import { useEffect, useState } from "react";
 
 const TOGGLES = [
