@@ -306,8 +306,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci
           npm ls rollup
+          npm ci
 
       - name: Build frontend
         if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
