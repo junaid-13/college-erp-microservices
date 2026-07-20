@@ -301,7 +301,7 @@ jobs:
       - name: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: "24"
+          node-version: "22"
           cache: npm
 
       - name: Install dependencies
