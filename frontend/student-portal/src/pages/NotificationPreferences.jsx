@@ -1,12 +1,3 @@
-/**
- * Notification preferences (Task 15.25).
- *
- * Canonical shared page mirrored into each portal's pages/.
- * Toggles for email / in-app / WhatsApp channels and per-module
- * preferences, plus the WhatsApp number used for delivery.
- *
- * @param {object} service  the portal's notificationService client
- */
 import { useEffect, useState } from "react";
 
 const TOGGLES = [
