@@ -330,7 +330,7 @@ jobs:
       - name: front-end image building
         if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
         run: docker build -t student-portal:${{ needs.Metadata.outputs.version }} -f ./frontend/student-portal/Dockerfile.dev ./frontend/student-portal
-        
+
       - name: backend image building
         if: needs.Finding-the-difference.outputs.backend_changed == 'true'
         run: docker build -t student-service:${{ needs.Metadata.outputs.version }} ./backend/student-service
