@@ -329,11 +329,11 @@ jobs:
 
       - name: front-end image building
         if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
-        run: docker build -t student-portal:${{ needs.Metadata.outputs.version }} ./frontend/student-portal
+        run: docker build -f ./frontend/student-portal/Dockerfile -t student-portal:${{ needs.Metadata.outputs.version }} .
 
       - name: backend image building
         if: needs.Finding-the-difference.outputs.backend_changed == 'true'
-        run: docker build -t student-service:${{ needs.Metadata.outputs.version }} ./backend/student-service
+        run: docker build -f ./backend/student-service/Dockerfile -t student-service:${{ needs.Metadata.outputs.version }} .
 
       - name: docker-images-listing
         run: docker images
