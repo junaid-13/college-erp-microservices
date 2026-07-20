@@ -306,6 +306,11 @@ jobs:
 
       - name: Install dependencies
         run: |
+          npm -v
+          node -v
+          npm config list
+          npm config get omit
+          npm config get optional
           npm ci
           npm ls rollup
           npm ls @rollup/rollup-linux-x64-gnu || true
