@@ -169,6 +169,11 @@ jobs:
       - Formatting
       - Secret-Scanning
       - Dependancy-scanning
+
+    outputs:
+      run-frontend-tests: ${{ steps.run-frontend-tests.outcome }}
+      run-backend-tests: ${{ steps.run-backend-tests.outcome }}
+
     steps:
       - name: Checkout code college-erp
         uses: actions/checkout@v5
@@ -308,7 +313,7 @@ jobs:
         run: npm ci
 
       - name: Build frontend
-        if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
+        if: needs.Finding-the-difference.outputs.frontend_changed == 'true' && needs.Unit-Tests.outputs.run-frontend-tests == 'success'
         run: npm run build:frontend
 
       - name: front-end image building
