@@ -305,7 +305,10 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+         npm ci
+         npm ls rollup
+
 
       - name: Build frontend
         if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
