@@ -317,6 +317,9 @@ jobs:
           ls -la node_modules/@rollup || true
           cat node_modules/rollup/package.json
           grep -n '@rollup/rollup-linux-x64-gnu' package-lock.json
+          npm install --no-save @rollup/rollup-linux-x64-gnu@4.61.1
+          npm ls @rollup/rollup-linux-x64-gnu
+          ls -la node_modules/@rollup
 
       - name: Build frontend
         if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
