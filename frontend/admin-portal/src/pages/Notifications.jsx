@@ -1,15 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
 
-/**
- * Notification center (Task 15.24).
- *
- * Canonical shared page mirrored into each portal's pages/.
- * Lists notifications with read status + date, supports pagination and
- * mark-as-read.
- *
- * @param {object} service the portal's notificationService client
- */
-
 function NotificationsTable({ items, read }) {
   return (
     <table className="data-table">
