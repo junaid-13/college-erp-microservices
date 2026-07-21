@@ -1,16 +1,9 @@
-/**
- * Notification preferences (Task 15.25).
- *
- * Canonical shared page mirrored into each portal's pages/.
- * Toggles for email / in-app and per-module preferences.
- *
- * @param {object} service  the portal's notificationService client
- */
 import { useEffect, useState } from "react";
 
 const TOGGLES = [
   { key: "emailNotifications", label: "Email notifications" },
   { key: "inAppNotifications", label: "In-app notifications" },
+  { key: "whatsappNotifications", label: "WhatsApp notifications" },
   { key: "leaveNotifications", label: "Leave" },
   { key: "assessmentNotifications", label: "Assessments" },
   { key: "marksNotifications", label: "Marks" },
@@ -23,11 +16,15 @@ export default function NotificationPreferences({ service }) {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [whatsappNumber, setWhatsappNumber] = useState("");
 
   useEffect(() => {
     service
       .getPreferences()
-      .then((res) => setPrefs(res.data))
+      .then((res) => {
+        setPrefs(res.data);
+        setWhatsappNumber(res.data?.whatsappNumber || "");
+      })
       .catch((err) =>
         setError(err.response?.data?.message || "Failed to load preferences"),
       )
@@ -42,6 +39,18 @@ export default function NotificationPreferences({ service }) {
     try {
       await service.updatePreferences({ [key]: next[key] });
       setMessage("Preferences updated.");
+    } catch (err) {
+      setError(err.response?.data?.message || "Update failed");
+    }
+  }
+
+  async function saveWhatsappNumber() {
+    setMessage("");
+    setError("");
+    try {
+      const res = await service.updatePreferences({ whatsappNumber });
+      setPrefs(res.data);
+      setMessage("WhatsApp number saved.");
     } catch (err) {
       setError(err.response?.data?.message || "Update failed");
     }
@@ -67,6 +76,19 @@ export default function NotificationPreferences({ service }) {
             {t.label}
           </label>
         ))}
+      </section>
+
+      <section className="detail-block">
+        <h3>WhatsApp Number</h3>
+        <label>
+          Number
+          <input
+            value={whatsappNumber}
+            onChange={(e) => setWhatsappNumber(e.target.value)}
+            placeholder="+91 98765 43210"
+          />
+        </label>
+        <button onClick={saveWhatsappNumber}>Save Number</button>
       </section>
     </div>
   );
