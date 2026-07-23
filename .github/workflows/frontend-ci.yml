@@ -17,6 +17,8 @@ jobs:
     outputs:
       frontend_changed: ${{steps.changes.outputs.frontend}}
       backend_changed: ${{steps.changes.outputs.backend}}
+      changed_portals: ${{ steps.components.outputs.changed_portals }}
+      changed_services: ${{ steps.components.outputs.changed_services }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -35,6 +37,46 @@ jobs:
               - 'backend/**'
             shared:
               - 'shared/**'
+
+
+      - name: Resolve changed portals and services
+        id: components
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE_SHA="${{ github.event.before }}"
+          fi
+
+          # base: just diff the most recent commit.
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            BASE_SHA="$(git rev-parse HEAD~1 2>/dev/null || git rev-parse HEAD)"
+          fi
+
+          echo "Diffing ${BASE_SHA}...${{ github.sha }}"
+          CHANGED_FILES="$(git diff --name-only "$BASE_SHA" "${{ github.sha }}")"
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          extract() {
+            root="$1"
+            printf '%s\n' "$CHANGED_FILES" \
+              | awk -F/ -v root="$root" '$1 == root && NF >= 2 { print $2 }' \
+              | sort -u \
+              | while read -r name; do
+                  [ -n "$name" ] && [ -d "${root}/${name}" ] && printf '%s\n' "$name"
+                done \
+              | jq -R . | jq -s -c .
+          }
+
+          PORTALS="$(extract frontend)"
+          SERVICES="$(extract backend)"
+
+          echo "Changed portals:  $PORTALS"
+          echo "Changed services: $SERVICES"
+          echo "changed_portals=$PORTALS" >> "$GITHUB_OUTPUT"
+          echo "changed_services=$SERVICES" >> "$GITHUB_OUTPUT"
   Linting:
     runs-on: ubuntu-latest
 
@@ -289,40 +331,55 @@ jobs:
             echo "run_id=${RUN_ID}"
           } >> "$GITHUB_OUTPUT"
 
-  frontend-backend-building:
-    runs-on: ubuntu-latest
+
+  Docker-images:
     needs:
       - Finding-the-difference
       - Unit-Tests
       - Metadata
+    uses: ./.github/workflows/docker-image-build.yml
+    with:
+      changed_portals: ${{ needs.Finding-the-difference.outputs.changed_portals }}
+      changed_services: ${{ needs.Finding-the-difference.outputs.changed_services }}
+      image_tag: ${{ needs.Metadata.outputs.version }}
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.MERN_ERP_TOKEN }}
-          fetch-depth: 1
-
-      - name: setup-node
-        uses: actions/setup-node@v5
-        with:
-          node-version: "24"
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build frontend
-        if: needs.Finding-the-difference.outputs.frontend_changed == 'true' && needs.Unit-Tests.outputs.run-frontend-tests == 'success'
-        run: npm run build:frontend
-
-      - name: front-end image building
-        if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
-        run: docker build -t student-portal:${{ needs.Metadata.outputs.version }} ./frontend/student-portal
-
-      - name: backend image building
-        if: needs.Finding-the-difference.outputs.backend_changed == 'true'
-        run: docker build -t student-service:${{ needs.Metadata.outputs.version }} ./backend/student-service
-
-      - name: docker-images-listing
-        run: docker images
+  #frontend-backend-building:
+  #  runs-on: ubuntu-latest
+  #  needs:
+  #    - Finding-the-difference
+  #    - Unit-Tests
+  #    - Metadata
+#
+  #  steps:
+  #    - name: Checkout code
+  #      uses: actions/checkout@v5
+  #      with:
+  #        token: ${{ secrets.MERN_ERP_TOKEN }}
+  #        fetch-depth: 1
+#
+  #    - name: setup-node
+  #      uses: actions/setup-node@v5
+  #      with:
+  #        node-version: "24"
+  #        cache: npm
+#
+  #    - name: Install dependencies
+  #      run: npm ci
+#
+  #    - name: Build frontend
+  #      if: needs.Finding-the-difference.outputs.frontend_changed == 'true' && needs.Unit-Tests.outputs.run-frontend-tests == 'success'
+  #      run: npm run build:frontend
+#
+  #    - name: front-end image building
+  #      if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
+  #      run: docker build -t student-portal:${{ needs.Metadata.outputs.version }} ./frontend/student-portal
+#
+  #    - name: backend image building
+  #      if: needs.Finding-the-difference.outputs.backend_changed == 'true'
+  #      run: docker build -t student-service:${{ needs.Metadata.outputs.version }} ./backend/student-service
+#
+  #    - name: docker-images-listing
+  #      run: docker images
