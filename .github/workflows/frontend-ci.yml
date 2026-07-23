@@ -38,7 +38,6 @@ jobs:
             shared:
               - 'shared/**'
 
-
       - name: Resolve changed portals and services
         id: components
         shell: bash
@@ -331,7 +330,6 @@ jobs:
             echo "run_id=${RUN_ID}"
           } >> "$GITHUB_OUTPUT"
 
-
   Docker-images:
     needs:
       - Finding-the-difference
@@ -353,33 +351,33 @@ jobs:
   #    - Unit-Tests
   #    - Metadata
 #
-  #  steps:
-  #    - name: Checkout code
-  #      uses: actions/checkout@v5
-  #      with:
-  #        token: ${{ secrets.MERN_ERP_TOKEN }}
-  #        fetch-depth: 1
+#  steps:
+#    - name: Checkout code
+#      uses: actions/checkout@v5
+#      with:
+#        token: ${{ secrets.MERN_ERP_TOKEN }}
+#        fetch-depth: 1
 #
-  #    - name: setup-node
-  #      uses: actions/setup-node@v5
-  #      with:
-  #        node-version: "24"
-  #        cache: npm
+#    - name: setup-node
+#      uses: actions/setup-node@v5
+#      with:
+#        node-version: "24"
+#        cache: npm
 #
-  #    - name: Install dependencies
-  #      run: npm ci
+#    - name: Install dependencies
+#      run: npm ci
 #
-  #    - name: Build frontend
-  #      if: needs.Finding-the-difference.outputs.frontend_changed == 'true' && needs.Unit-Tests.outputs.run-frontend-tests == 'success'
-  #      run: npm run build:frontend
+#    - name: Build frontend
+#      if: needs.Finding-the-difference.outputs.frontend_changed == 'true' && needs.Unit-Tests.outputs.run-frontend-tests == 'success'
+#      run: npm run build:frontend
 #
-  #    - name: front-end image building
-  #      if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
-  #      run: docker build -t student-portal:${{ needs.Metadata.outputs.version }} ./frontend/student-portal
+#    - name: front-end image building
+#      if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
+#      run: docker build -t student-portal:${{ needs.Metadata.outputs.version }} ./frontend/student-portal
 #
-  #    - name: backend image building
-  #      if: needs.Finding-the-difference.outputs.backend_changed == 'true'
-  #      run: docker build -t student-service:${{ needs.Metadata.outputs.version }} ./backend/student-service
+#    - name: backend image building
+#      if: needs.Finding-the-difference.outputs.backend_changed == 'true'
+#      run: docker build -t student-service:${{ needs.Metadata.outputs.version }} ./backend/student-service
 #
-  #    - name: docker-images-listing
-  #      run: docker images
+#    - name: docker-images-listing
+#      run: docker images

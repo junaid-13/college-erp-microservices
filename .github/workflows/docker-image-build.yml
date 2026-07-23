@@ -81,7 +81,6 @@ jobs:
             ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }}
             ${{ steps.meta.outputs.image }}:latest
 
-
   build-services:
     name: Build service image (${{ matrix.service }})
     if: ${{ inputs.changed_services != '' && inputs.changed_services != '[]' }}
