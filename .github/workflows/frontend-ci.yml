@@ -30,6 +30,7 @@ jobs:
         uses: dorny/paths-filter@v4
         id: changes
         with:
+          list-files: json
           filters: |
             frontend:
               - 'frontend/**'
@@ -41,26 +42,17 @@ jobs:
       - name: Resolve changed portals and services
         id: components
         shell: bash
+        env:
+          FRONTEND_FILES: ${{ steps.changes.outputs.frontend_files }}
+          BACKEND_FILES: ${{ steps.changes.outputs.backend_files }}
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          else
-            BASE_SHA="${{ github.event.before }}"
-          fi
-
-          # base: just diff the most recent commit.
-          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
-            BASE_SHA="$(git rev-parse HEAD~1 2>/dev/null || git rev-parse HEAD)"
-          fi
-
-          echo "Diffing ${BASE_SHA}...${{ github.sha }}"
-          CHANGED_FILES="$(git diff --name-only "$BASE_SHA" "${{ github.sha }}")"
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-
           extract() {
             root="$1"
-            printf '%s\n' "$CHANGED_FILES" \
+            files="$2"
+            [ -z "$files" ] && files="[]"
+
+            printf '%s' "$files" \
+              | jq -r '.[]' \
               | awk -F/ -v root="$root" '$1 == root && NF >= 2 { print $2 }' \
               | sort -u \
               | while read -r name; do
@@ -69,8 +61,8 @@ jobs:
               | jq -R . | jq -s -c .
           }
 
-          PORTALS="$(extract frontend)"
-          SERVICES="$(extract backend)"
+          PORTALS="$(extract frontend "$FRONTEND_FILES")"
+          SERVICES="$(extract backend "$BACKEND_FILES")"
 
           echo "Changed portals:  $PORTALS"
           echo "Changed services: $SERVICES"
