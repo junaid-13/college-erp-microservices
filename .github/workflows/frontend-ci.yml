@@ -30,6 +30,7 @@ jobs:
         uses: dorny/paths-filter@v4
         id: changes
         with:
+          list-files: json
           filters: |
             frontend:
               - 'frontend/**'
@@ -41,26 +42,17 @@ jobs:
       - name: Resolve changed portals and services
         id: components
         shell: bash
+        env:
+          FRONTEND_FILES: ${{ steps.changes.outputs.frontend_files }}
+          BACKEND_FILES: ${{ steps.changes.outputs.backend_files }}
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          else
-            BASE_SHA="${{ github.event.before }}"
-          fi
-
-          # base: just diff the most recent commit.
-          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
-            BASE_SHA="$(git rev-parse HEAD~1 2>/dev/null || git rev-parse HEAD)"
-          fi
-
-          echo "Diffing ${BASE_SHA}...${{ github.sha }}"
-          CHANGED_FILES="$(git diff --name-only "$BASE_SHA" "${{ github.sha }}")"
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-
           extract() {
             root="$1"
-            printf '%s\n' "$CHANGED_FILES" \
+            files="$2"
+            [ -z "$files" ] && files="[]"
+
+            printf '%s' "$files" \
+              | jq -r '.[]' \
               | awk -F/ -v root="$root" '$1 == root && NF >= 2 { print $2 }' \
               | sort -u \
               | while read -r name; do
@@ -69,8 +61,8 @@ jobs:
               | jq -R . | jq -s -c .
           }
 
-          PORTALS="$(extract frontend)"
-          SERVICES="$(extract backend)"
+          PORTALS="$(extract frontend "$FRONTEND_FILES")"
+          SERVICES="$(extract backend "$BACKEND_FILES")"
 
           echo "Changed portals:  $PORTALS"
           echo "Changed services: $SERVICES"
@@ -245,13 +237,6 @@ jobs:
         run: |
           npm install
 
-      #- name: Debug workspace
-      #  working-directory: erp-test
-      #  run: |
-      #    pwd
-      #    ls -la
-      #    find . -maxdepth 2 -type f | head -50
-
       - name: Run Frontend Unit Tests
         if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
         id: run-frontend-tests
@@ -331,55 +316,15 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
   Docker-images:
-    runs-on: ubuntu-latest
     needs:
       - Finding-the-difference
       - Unit-Tests
       - Metadata
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.MERN_ERP_TOKEN }}
-          fetch-depth: 1
-
-      - name: setup-node
-        uses: actions/setup-node@v5
-        with:
-          node-version: "22"
-          cache: npm
-
-      - name: Install dependencies
-        run: |
-          # npm -v
-          # node -v
-          # npm config list
-          # npm config get omit
-          # npm config get optional
-          # npm ci
-          # npm ls rollup
-          # npm ls @rollup/rollup-linux-x64-gnu || true
-          # ls -la node_modules/@rollup || true
-          # cat node_modules/rollup/package.json
-          # grep -n '@rollup/rollup-linux-x64-gnu' package-lock.json
-          # npm install --no-save @rollup/rollup-linux-x64-gnu@4.61.1
-          # npm ls @rollup/rollup-linux-x64-gnu
-          # ls -la node_modules/@rollup
-
-          npm ci
-
-      - name: Build frontend
-        if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
-        run: npm run build:frontend
-
-      - name: front-end image building
-        if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
-        run: docker build -f ./frontend/student-portal/Dockerfile -t student-portal:${{ needs.Metadata.outputs.version }} .
-
-      - name: backend image building
-        if: needs.Finding-the-difference.outputs.backend_changed == 'true'
-        run: docker build -f ./backend/student-service/Dockerfile -t student-service:${{ needs.Metadata.outputs.version }} .
-
-      - name: docker-images-listing
-        run: docker images
+    uses: ./.github/workflows/docker-image-build.yml
+    with:
+      changed_portals: ${{ needs.Finding-the-difference.outputs.changed_portals }}
+      changed_services: ${{ needs.Finding-the-difference.outputs.changed_services }}
+      image_tag: ${{ needs.Metadata.outputs.version }}
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
