@@ -4,12 +4,12 @@ on:
   workflow_call:
     inputs:
       changed_portals:
-        description: 'JSON array (as string) of changed portal names.'
+        description: "JSON array (as string) of changed portal names."
         required: false
         type: string
         default: "[]"
       changed_services:
-        description: 'JSON array (as string) of changed service names.'
+        description: "JSON array (as string) of changed service names."
         required: false
         type: string
         default: "[]"
