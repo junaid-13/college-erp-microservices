@@ -323,7 +323,6 @@ jobs:
             echo "run_id=${RUN_ID}"
           } >> "$GITHUB_OUTPUT"
 
-
   Docker-images:
     needs:
       - Finding-the-difference
