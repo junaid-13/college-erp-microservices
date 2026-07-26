@@ -10,7 +10,7 @@ RUN npm ci
 
 COPY frontend/librarian-portal/ /librarian-portal/frontend/librarian-portal/
 
-RUN cd frontend/librarian-portal
+RUN npm --prefix /librarian-portal/frontend/librarian-portal/ run build
 
 RUN npm run build
 
