@@ -331,6 +331,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
   Docker-images:
+    runs-on: ubuntu-latest
     needs:
       - Finding-the-difference
       - Unit-Tests

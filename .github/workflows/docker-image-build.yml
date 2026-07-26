@@ -4,12 +4,12 @@ on:
   workflow_call:
     inputs:
       changed_portals:
-        description: 'JSON array (as string) of changed portal names, e.g. ["admin-portal"]'
+        description: 'JSON array (as string) of changed portal names.'
         required: false
         type: string
         default: "[]"
       changed_services:
-        description: 'JSON array (as string) of changed service names, e.g. ["auth-service"]'
+        description: 'JSON array (as string) of changed service names.'
         required: false
         type: string
         default: "[]"
@@ -23,7 +23,7 @@ on:
         description: "Docker Hub username / namespace to push under"
         required: true
       DOCKERHUB_TOKEN:
-        description: "Docker Hub access token (never hardcode credentials)"
+        description: "Docker Hub access token"
         required: true
 
 concurrency:
