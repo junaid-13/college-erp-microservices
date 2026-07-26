@@ -10,6 +10,8 @@ RUN npm ci
 
 COPY frontend/librarian-portal/ /librarian-portal/frontend/librarian-portal/
 
+RUN cd frontend/librarian-portal
+
 RUN npm run build
 
 FROM gcr.io/distroless/nodejs20-debian12
