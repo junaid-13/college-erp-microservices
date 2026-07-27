@@ -1,6 +1,10 @@
 
 FROM node:26-slim AS base
 
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists/*
+    
 WORKDIR /faculty-portal/
 
 COPY package.json package-lock.json /faculty-portal/
