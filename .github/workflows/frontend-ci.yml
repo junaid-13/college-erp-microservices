@@ -334,7 +334,7 @@ jobs:
     needs:
       - Docker-images
     steps:
-      - name: Download docker images 
+      - name: Download docker images
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME}}/${{matrix.portal }}:latest && ${{matrix.service}}:latest
 
       - name: scan container images
