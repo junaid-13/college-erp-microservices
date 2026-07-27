@@ -59,7 +59,8 @@ jobs:
             echo "has_dockerfile=false" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "context=${PORTAL_DIR}" >> "$GITHUB_OUTPUT"
+          echo "context=." >> "$GITHUB_OUTPUT"
+          echo "dockerfile=${PORTAL_DIR}/Dockerfile" >> "$GITHUB_OUTPUT"
           echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
 
@@ -75,7 +76,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ${{ steps.meta.outputs.context }}
-          file: ${{ steps.meta.outputs.context }}/Dockerfile
+          file: ${{ steps.meta.outputs.dockerfile }}
           push: true
           tags: |
             ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }}
@@ -110,6 +111,7 @@ jobs:
           fi
 
           echo "context=${SERVICE_DIR}" >> "$GITHUB_OUTPUT"
+          echo "dockerfile=${SERVICE_DIR}/Dockerfile" >> "$GITHUB_OUTPUT"
           echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
 
@@ -125,7 +127,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ${{ steps.meta.outputs.context }}
-          file: ${{ steps.meta.outputs.context }}/Dockerfile
+          file: ${{ steps.meta.outputs.dockerfile }}
           push: true
           tags: |
             ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }}
