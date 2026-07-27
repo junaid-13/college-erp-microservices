@@ -1,3 +1,4 @@
+
 FROM node:20-slim AS base
 
 WORKDIR /librarian-portal/
@@ -6,13 +7,11 @@ COPY package.json package-lock.json /librarian-portal/
 
 COPY frontend/librarian-portal/package.json /librarian-portal/frontend/librarian-portal/
 
-RUN npm ci
+RUN npm ci --workspace frontend/librarian-portal
 
 COPY frontend/librarian-portal/ /librarian-portal/frontend/librarian-portal/
 
-RUN npm --prefix /librarian-portal/frontend/librarian-portal/ run build
-
-RUN npm run build
+RUN npm run build --workspace frontend/librarian-portal
 
 FROM gcr.io/distroless/nodejs20-debian12
 
