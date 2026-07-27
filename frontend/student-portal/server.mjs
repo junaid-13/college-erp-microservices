@@ -1,5 +1,3 @@
-// Minimal zero-dependency static file server for the built Vite SPA.
-// Serves files from ./dist and falls back to index.html for client-side routes.
 import console from "node:console";
 import { readFile, stat } from "node:fs/promises";
 import { createServer } from "node:http";
@@ -35,7 +33,6 @@ async function send(res, filePath) {
 
 const server = createServer(async (req, res) => {
   try {
-    // Strip query string and prevent path traversal.
     const urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
     const safePath = normalize(urlPath).replace(/^(\.\.[/\\])+/, "");
     let filePath = join(ROOT, safePath);
@@ -45,7 +42,6 @@ const server = createServer(async (req, res) => {
       if (info.isDirectory()) filePath = join(filePath, "index.html");
       await send(res, filePath);
     } catch {
-      // SPA fallback: unknown route -> index.html (React Router handles it).
       await send(res, join(ROOT, "index.html"));
     }
   } catch {
@@ -54,4 +50,4 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => console.log(`student-portal serving on :${PORT}`));
+server.listen(PORT, () => console.log(`librarian-portal serving on :${PORT}`));
