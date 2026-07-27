@@ -334,6 +334,9 @@ jobs:
     needs:
       - Docker-images
     steps:
+      - name: Download docker images 
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME}}/${{matrix.portal }}:latest && ${{matrix.service}}:latest
+
       - name: scan container images
         uses: crazy-max/ghaction-container-scan@v4
         with:
