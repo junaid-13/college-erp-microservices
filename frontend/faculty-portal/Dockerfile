@@ -1,10 +1,6 @@
 
 FROM node:26-slim AS base
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists/*
-    
 WORKDIR /faculty-portal/
 
 COPY package.json package-lock.json /faculty-portal/
@@ -17,7 +13,7 @@ COPY frontend/faculty-portal/ /faculty-portal/frontend/faculty-portal/
 
 RUN npm run build --workspace frontend/faculty-portal
 
-FROM gcr.io/distroless/nodejs20-debian12
+FROM gcr.io/distroless/nodejs26-debian12
 
 WORKDIR /app
 
