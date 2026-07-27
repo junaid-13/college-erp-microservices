@@ -13,7 +13,7 @@ COPY frontend/faculty-portal/ /faculty-portal/frontend/faculty-portal/
 
 RUN npm run build --workspace frontend/faculty-portal
 
-FROM gcr.io/distroless/nodejs26-debian12
+FROM gcr.io/distroless/nodejs26-debian13
 
 WORKDIR /app
 
