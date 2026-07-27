@@ -17,6 +17,8 @@ jobs:
     outputs:
       frontend_changed: ${{steps.changes.outputs.frontend}}
       backend_changed: ${{steps.changes.outputs.backend}}
+      changed_portals: ${{ steps.components.outputs.changed_portals }}
+      changed_services: ${{ steps.components.outputs.changed_services }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -28,6 +30,7 @@ jobs:
         uses: dorny/paths-filter@v4
         id: changes
         with:
+          list-files: json
           filters: |
             frontend:
               - 'frontend/**'
@@ -35,6 +38,36 @@ jobs:
               - 'backend/**'
             shared:
               - 'shared/**'
+
+      - name: Resolve changed portals and services
+        id: components
+        shell: bash
+        env:
+          FRONTEND_FILES: ${{ steps.changes.outputs.frontend_files }}
+          BACKEND_FILES: ${{ steps.changes.outputs.backend_files }}
+        run: |
+          extract() {
+            root="$1"
+            files="$2"
+            [ -z "$files" ] && files="[]"
+
+            printf '%s' "$files" \
+              | jq -r '.[]' \
+              | awk -F/ -v root="$root" '$1 == root && NF >= 2 { print $2 }' \
+              | sort -u \
+              | while read -r name; do
+                  [ -n "$name" ] && [ -d "${root}/${name}" ] && printf '%s\n' "$name"
+                done \
+              | jq -R . | jq -s -c .
+          }
+
+          PORTALS="$(extract frontend "$FRONTEND_FILES")"
+          SERVICES="$(extract backend "$BACKEND_FILES")"
+
+          echo "Changed portals:  $PORTALS"
+          echo "Changed services: $SERVICES"
+          echo "changed_portals=$PORTALS" >> "$GITHUB_OUTPUT"
+          echo "changed_services=$SERVICES" >> "$GITHUB_OUTPUT"
   Linting:
     runs-on: ubuntu-latest
 
@@ -169,6 +202,11 @@ jobs:
       - Formatting
       - Secret-Scanning
       - Dependancy-scanning
+
+    outputs:
+      run-frontend-tests: ${{ steps.run-frontend-tests.outcome }}
+      run-backend-tests: ${{ steps.run-backend-tests.outcome }}
+
     steps:
       - name: Checkout code college-erp
         uses: actions/checkout@v5
@@ -198,13 +236,6 @@ jobs:
         working-directory: erp-test
         run: |
           npm install
-
-      #- name: Debug workspace
-      #  working-directory: erp-test
-      #  run: |
-      #    pwd
-      #    ls -la
-      #    find . -maxdepth 2 -type f | head -50
 
       - name: Run Frontend Unit Tests
         if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
@@ -284,56 +315,16 @@ jobs:
             echo "run_id=${RUN_ID}"
           } >> "$GITHUB_OUTPUT"
 
-  frontend-backend-building:
-    runs-on: ubuntu-latest
+  Docker-images:
     needs:
       - Finding-the-difference
       - Unit-Tests
       - Metadata
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.MERN_ERP_TOKEN }}
-          fetch-depth: 1
-
-      - name: setup-node
-        uses: actions/setup-node@v5
-        with:
-          node-version: "22"
-          cache: npm
-
-      - name: Install dependencies
-        run: |
-          # npm -v
-          # node -v
-          # npm config list
-          # npm config get omit
-          # npm config get optional
-          # npm ci
-          # npm ls rollup
-          # npm ls @rollup/rollup-linux-x64-gnu || true
-          # ls -la node_modules/@rollup || true
-          # cat node_modules/rollup/package.json
-          # grep -n '@rollup/rollup-linux-x64-gnu' package-lock.json
-          # npm install --no-save @rollup/rollup-linux-x64-gnu@4.61.1
-          # npm ls @rollup/rollup-linux-x64-gnu
-          # ls -la node_modules/@rollup
-
-          npm ci
-
-      - name: Build frontend
-        if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
-        run: npm run build:frontend
-
-      - name: front-end image building
-        if: needs.Finding-the-difference.outputs.frontend_changed == 'true'
-        run: docker build -f ./frontend/student-portal/Dockerfile -t student-portal:${{ needs.Metadata.outputs.version }} .
-
-      - name: backend image building
-        if: needs.Finding-the-difference.outputs.backend_changed == 'true'
-        run: docker build -f ./backend/student-service/Dockerfile -t student-service:${{ needs.Metadata.outputs.version }} .
-
-      - name: docker-images-listing
-        run: docker images
+    uses: ./.github/workflows/docker-image-build.yml
+    with:
+      changed_portals: ${{ needs.Finding-the-difference.outputs.changed_portals }}
+      changed_services: ${{ needs.Finding-the-difference.outputs.changed_services }}
+      image_tag: ${{ needs.Metadata.outputs.version }}
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}

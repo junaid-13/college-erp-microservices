@@ -5,7 +5,7 @@ import { join, normalize, extname } from "node:path";
 import process from "node:process";
 
 const ROOT = join(process.cwd(), "dist");
-const PORT = process.env.PORT || 5173;
+const PORT = process.env.PORT || 5177;
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -50,4 +50,4 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => console.log(`librarian-portal serving on :${PORT}`));
+server.listen(PORT, () => console.log(`student-portal serving on :${PORT}`));
