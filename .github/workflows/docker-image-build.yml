@@ -82,6 +82,12 @@ jobs:
             ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }}
             ${{ steps.meta.outputs.image }}:latest
 
+      - name: Scan portal image for vulnerabilities
+        if: ${{ steps.meta.outputs.has_dockerfile == 'true' }}
+        uses: crazy-max/ghaction-container-scan@v4
+        with:
+          image: ${{ steps.meta.outputs.image }}:latest
+
   build-services:
     name: Build service image (${{ matrix.service }})
     if: ${{ inputs.changed_services != '' && inputs.changed_services != '[]' }}
@@ -132,3 +138,9 @@ jobs:
           tags: |
             ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }}
             ${{ steps.meta.outputs.image }}:latest
+
+      - name: Scan service image for vulnerabilities
+        if: ${{ steps.meta.outputs.has_dockerfile == 'true' }}
+        uses: crazy-max/ghaction-container-scan@v4
+        with:
+          image: ${{ steps.meta.outputs.image }}:latest

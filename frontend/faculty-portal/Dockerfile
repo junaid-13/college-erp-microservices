@@ -1,5 +1,5 @@
 
-FROM node:20-slim AS base
+FROM node:26-slim AS base
 
 WORKDIR /faculty-portal/
 
@@ -13,7 +13,7 @@ COPY frontend/faculty-portal/ /faculty-portal/frontend/faculty-portal/
 
 RUN npm run build --workspace frontend/faculty-portal
 
-FROM gcr.io/distroless/nodejs20-debian12
+FROM gcr.io/distroless/nodejs26-debian13
 
 WORKDIR /app
 

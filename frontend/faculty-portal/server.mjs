@@ -5,7 +5,7 @@ import { join, normalize, extname } from "node:path";
 import process from "node:process";
 
 const ROOT = join(process.cwd(), "dist");
-const PORT = process.env.PORT || 5175;
+const PORT = process.env.PORT || 5176;
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
