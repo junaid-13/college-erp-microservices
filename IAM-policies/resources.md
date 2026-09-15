@@ -18,3 +18,5 @@
 - Github
 - ArgoCD
 
+## Networking
+- VPC
